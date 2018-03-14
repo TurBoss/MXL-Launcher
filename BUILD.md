@@ -2,9 +2,7 @@ Here are some of the details about building and source/resource files.
 
 ____
 
-# Source
-
-## Files
+# Source Files
 Source files are split between the Launcher and Builder.
 * Developer version of the Launcher is in [dev](dev). Run it with [dev_test.bat](dev_test.bat).
 * Launcher source code is in [dev\resources\app](dev\resources\app).
@@ -13,9 +11,10 @@ Source files are split between the Launcher and Builder.
 * Build the Launcher files/setup/update with [make.bat](make.bat). They are built to the [dist](dist) folder.
 
 #### Files in detail
-Located in the root of the repository:
+Located in the [root](https://github.com/Median-XL/) of the repository:
 * [dev_test.bat](dev_test.bat) - quick testing of source code changes. I suggest you change `devTools.enableConsoleLog` option in [dev\resources\app\main.js](dev\resources\app\main.js) from `false` to `true` to see the command line debug output.
-* [make.bat](make.bat) - builds the Launcher files/setup/update. Checks version number missmatches in all **package.json**s. Asks if update should contain just the app folder or all binaries. 
+* [make.bat](make.bat) - builds the Launcher files/setup/update. Checks version number missmatches in all **package.json**s. Asks if update should contain just the app folder or all binaries.  
+
 Located in [dev\resources\app](dev\resources\app):
 * [main.js](dev\resources\app\main.js) - main app file: app logic handling, load modules/includes, initialize state variables
 * [const.js](dev\resources\app\const.js) - app constants: about, hotkeys, paths, file names, D2 file sizes/hashes, urls, registry keys/values, command line arguments
@@ -27,6 +26,7 @@ Located in [dev\resources\app](dev\resources\app):
 * [settings.html](dev\resources\app\settings.html) - settings window layout and function
 * [installation](dev\resources\app\installation) - main and settings window css
 * [assets](dev\resources\app\assets) - files used during mod installation
+
 Located in [installer](installer):
 * [setup.iss](installer\setup.iss) - setup script: compiles a installing/uninstalling script with Launcher files into an exe file
 * [update.iss](installer\update.iss) - update script: compiles Launcher binary source code into a exe file that installs the update
@@ -58,8 +58,9 @@ Most of the building/compiling process is handled by the [make.bat](make.bat) ba
 #### HOW TO CREATE/UPDATE THE BUILDER?
 1. Uninstall *Node.js* and install it again to get the new version.
 2. Copy [package.json](package.json), [make.bat](make.bat), [installer](installer), and [dev](dev) to a new folder.
-3. Open the *command prompt* in the folder where the copied [package.json](package.json) is and install *electron* and *electron-builder* by typing `npm install <module name> --save-dev` for each one.
-4. (Optional) To update the binaries of the dev Launcher used for testing: Build new Launcher binaries with [make.bat](make.bat), and replace the binaries in [dev](dev) with the ones from the Launcher folder in [dist](dist) (keep the [dev\resources\app](dev\resources\app) folder, don't copy **app.asar**).
+3. Delete `devDependecies` from the copied **package.json**.
+4. Open the *command prompt* in the folder where the copied [package.json](package.json) is and install *electron* and *electron-builder* by typing `npm install <module name> --save-dev` for each one.
+5. (Optional) To update the binaries of the dev Launcher used for testing: Build new Launcher binaries with [make.bat](make.bat), and replace the binaries in [dev](dev) with the ones from the Launcher folder in [dist](dist) (keep the [dev\resources\app](dev\resources\app) folder, don't copy **app.asar**).
 
 ____
 

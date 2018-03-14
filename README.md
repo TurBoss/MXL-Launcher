@@ -24,3 +24,4 @@ For additional building and details, see [BUILD](BUILD.md).
 ![Median XL Launcher settings window screenshot](Screenshot2.jpg "Median XL Launcher settings window screenshot")
 
 ## License
+[GNU General Public License v3.0](LICENCE)
