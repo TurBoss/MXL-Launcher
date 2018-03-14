@@ -57,7 +57,7 @@ Most of the building/compiling process is handled by the [make.bat](make.bat) ba
 
 #### HOW TO CREATE/UPDATE THE BUILDER?
 1. Uninstall *Node.js* and install it again to get the new version.
-2. Copy [package.json](package.json), [make.bat](make.bat), [installer](installer), and [dev](dev) to a new folder.
+2. Copy [package.json](package.json), [make.bat](make.bat), [dev_test.bat](dev_test.bat), [installer](installer), and [dev](dev) to a new folder.
 3. Delete `devDependecies` from the copied **package.json**.
 4. Open the *command prompt* in the folder where the copied [package.json](package.json) is and install *electron* and *electron-builder* by typing `npm install <module name> --save-dev` for each one.
 5. (Optional) To update the binaries of the dev Launcher used for testing: Build new Launcher binaries with [make.bat](make.bat), and replace the binaries in [dev](dev) with the ones from the Launcher folder in [dist](dist) (keep the [dev\resources\app](dev\resources\app) folder, don't copy **app.asar**).

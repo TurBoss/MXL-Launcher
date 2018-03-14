@@ -14,12 +14,12 @@ ____
 
 ## Quick Guide
 
-Source code and assets/resources are in [dev\resources\app](dev\resources\app), [dev\resources\external](dev\resources\external), and [installer](installer).  
-[make.bat](make.bat) creates the Launcher files/setup/update.  
-[dev_test.bat](dev_test.bat) runs the dev test version of the Launcher, which is useful for quickly testing code without building every time.  
-For additional building and details, see [BUILD](BUILD.md).
+* Source code and assets/resources are in [dev\resources\app](dev\resources\app), [dev\resources\external](dev\resources\external), and [installer](installer).  
+* [make.bat](make.bat) creates the Launcher files/setup/update.  
+* [dev_test.bat](dev_test.bat) runs the dev test version of the Launcher, which is useful for quickly testing code without building every time.  
+* For additional building and details, see [BUILD](BUILD.md).
 
-## Screenshots of the Launcher
+## Screenshots
 ![Median XL Launcher window screenshot](Screenshot.jpg "Median XL Launcher window screenshot")  
 ![Median XL Launcher settings window screenshot](Screenshot2.jpg "Median XL Launcher settings window screenshot")
 
