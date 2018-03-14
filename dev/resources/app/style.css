@@ -1,0 +1,448 @@
+
+/*  Median XL Launcher Style Sheet
+    --------------------------------------------------------------
+	Style name:	MedianXL		
+	Original author(s): Marco Paulucci, Ivan Jelenić
+	
+	Immer wenn ich einsam bin
+	Zieht es mich zum Feuer hin
+	Warum ist die Sonne rund?
+	Warum word ich nicht gesund...
+
+	Zu jeder Zeit, an jedem Ort,
+	bleibt das Tun der Menschen das gleiche.
+	
+    --------------------------------------------------------------
+*/
+
+@font-face {
+    font-family: "Catamaran";
+    src: url(assets/Catamaran-Regular.ttf);
+}
+
+/* General
+----------------------------------------*/
+
+html, body {
+	height: 100%;
+	background: #171719;
+	overflow: hidden;
+	margin: 0;
+}
+
+body.body {
+	background: url('assets/img/background.png') top right no-repeat;
+}
+
+.header {
+	background: rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    height: 25px;
+	box-shadow: 0px 0px 2px 2px rgba(0,0,0,0.35);
+}
+
+.header .btn {
+	opacity: 0.5;
+    display: inline-block;
+    float: right;
+    margin-right: 0px;
+    padding: 5px 15px 0;
+}
+
+.header .btn:hover {
+	opacity: 0.9;
+	transition: opacity 100ms;
+}
+
+.container {
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+}
+
+.panel {
+	outline: 1px solid rgba(255, 255, 255, 0.15);
+	outline-offset: -2px;
+	border: 1px solid black;
+	box-shadow: 0px 0px 11px 3px rgba(0,0,0,0.75);
+}
+
+.content {
+	font-family: "Catamaran", Verdana, Arial;
+	color: #90887a;
+}
+
+.content a {
+	color: #985d4a;
+}
+
+.content a:hover {
+	color: #b18171;
+}
+
+hr {
+	border-width: 1px 0 0 0;
+    border-color: #90887a;
+    margin: 20px 0;
+}
+
+.btn, button:not([disabled]), label, input[type=checkbox], input[type=radio] {
+	cursor: 			pointer;
+	-webkit-app-region: no-drag;
+}
+
+
+/* Darkenwrapper
+----------------------------------------*/
+
+#blackbox {
+	background: rgba(0, 0, 0, 0.6);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 10;
+	display: none;
+}
+
+/* Loading Spinner
+----------------------------------------*/
+
+#loading {
+	position: absolute;
+    background: url(assets/img/icon-spinner.gif);
+    bottom: calc(6% + 10px);
+    right: calc(5% + 86px);
+    width: 40px;
+    height: 40px;
+}
+
+
+/* News
+----------------------------------------*/
+
+#news {
+	display: inline-block;
+	margin-top: 255px; /*23%*/
+	margin-left: 89px; /*8%*/
+	opacity: 0;
+}
+
+#news .panel {
+	width: 250px;
+	height: 300px;
+	display: inline-block;
+	background: #171719;
+	padding: 10px 20px;
+	font-size: 14px;
+	margin-right: 20px;
+	box-sizing: border-box;
+	opacity: 0.85;
+	cursor: pointer;
+	transition: opacity 200ms;
+	vertical-align: top;
+}
+
+#news .panel:hover {
+	opacity: 0.95;
+	transition: opacity 200ms;
+}
+
+#news .panel:hover .news-title {
+	color: #c0b8aa;
+}
+
+#news .news-title {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+	padding-bottom: 5px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #b0a89a;
+    padding-left: 8px;
+    text-shadow: 0px 0px 3px rgba(25, 16, 9, 0.82);
+    letter-spacing: 0.4px;
+}
+
+#news .news-title .fa {
+	font-size: 14px;
+	margin-right: 8px;
+	color: #775e36;
+}
+
+#news .news-time {
+	margin-top: 10px;
+	padding-top: 10px;
+	color: #777;
+	font-family: "Verdana";
+	font-size: 11px;
+	border-top: 1px solid rgba(120, 120, 120, 0.12);
+	text-align: right;
+}
+
+/* Download Bar
+----------------------------------------*/
+
+#dl_progress {
+	width: 55%;
+    height: 25px;
+    background: black;
+    position: absolute;
+    bottom: calc(5% + 25px);
+    right: calc(5% + 300px);
+    border-radius: 3px;
+    box-shadow: 0px 0px 11px 3px rgba(0,0,0,0.5);
+    display: none;
+}
+
+#dl_progress div {
+	width: 0%;
+	height: 25px;
+	background: url(assets/img/download-meter.png);
+	background-size: 2px 2px;
+}
+
+#dl_progress span {
+	float: left;
+	display: block;
+	width: 400px;
+	padding-left: 5px;
+	font-family: Verdana;
+	font-size: 12px;
+	padding-top: 5px;
+	cursor: default;
+}
+
+
+/* Play Button
+----------------------------------------*/
+
+.btn_play {
+	border: none;
+	outline: none;
+	position: absolute;
+    bottom: 6%;
+    right: 5%;
+    width: 213px;
+    height: 61px;
+    background-color: #171719;
+    background-image: url('assets/img/button-play.png');
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 18px;
+    box-shadow: 0px 0px 10px #000;
+    padding-top: 3px;
+    display: none;
+    cursor: pointer;
+    transition: opacity 500ms;
+	font-size: 24px;
+	opacity: 0;
+    /*text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;*/
+}
+
+.btn_active:hover {
+	background-position-x: 100%;
+	transition: opacity 100ms;
+}
+
+.btn_active:active {
+	transform: translate(2px, 1px);
+	/*box-shadow: inset -5px -5px 0px -5px rgba(0, 0, 0, 0.5);*/
+	box-shadow: none;
+	transition: opacity 100ms;
+}
+
+body.body.cursor-progress *:not(a):not(img) { /* shows the progress cursor after clicking on play, but before the game is launched */
+	cursor: progress !important; /* if important is removed, then custom cursors for other elements override it */
+}
+
+/* Logo
+----------------------------------------*/
+
+#logo {
+	position: absolute;
+	top: 98px; /*12%*/
+	left: 89px; /*8%*/
+	width: 144px;
+	height: 40px;
+	background: url('assets/img/logo.png');
+	opacity: 0.9;
+	cursor: pointer;
+}
+
+#logo:hover {
+	opacity: 1;
+}
+
+
+/* Update Notice Text
+----------------------------------------*/
+
+#notice {
+	cursor: default;
+	position: absolute;
+    top: 28px;
+    left: 2px;
+    background: rgba(65, 173, 10, 0.55);
+    width: calc(100% - 6px);
+    border: 1px solid rgba(195, 239, 189, 0.31);
+    font-size: 12px;
+    font-family: Verdana;
+    text-align: center;
+    padding: 5px 0;
+    color: rgba(200, 236, 196, 0.8);
+    display: none;
+}
+
+#notice-restart {
+	color: rgba(255, 255, 255, 0.8);
+	cursor: pointer;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+#notice-restart:hover, #notice i:hover {
+	color: #fff;
+}
+
+#notice .fa-times {
+	float: right;
+    margin-right: 7px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+/* Median XL Version
+----------------------------------------*/
+
+#median_version {
+	cursor: default;
+    bottom: 3%;
+    right: 5%;
+    width: 213px;
+    position: absolute;
+    text-align: center;
+    font-family: Verdana;
+    font-size: 12px;
+    color: #777;
+    opacity: 0;
+}
+
+#median_version.changelog {
+	color: #777;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+#median_version.changelog:hover {
+	color: #ccc;
+}
+
+
+/* Menu
+----------------------------------------*/
+
+#menu {
+	position: absolute;
+	left: 78px; /*7%*/
+	top: 148px; /*18%*/
+	font-size: 15px;
+	color: rgba(224, 209, 178, 0.55);
+	font-weight: bold;
+	text-shadow: 0px 0px 3px rgb(0, 0, 0);
+	letter-spacing: 0.6px;
+	padding: 0 20px;
+}
+
+#menu li {
+	opacity: 0.5;
+	cursor: default;
+}
+
+#menu li.menu-active:hover {
+	color: rgba(220, 196, 149, 0.85);
+	margin-left: 2px;
+}
+
+#menu .fa {
+	margin-top: 1px;
+}
+
+#menu .menu-active {
+	opacity: 1;
+	cursor: pointer;
+}
+
+/* Settings
+----------------------------------------*/
+
+input[type=checkbox] {
+	display:none;
+}
+
+input[type=checkbox] + label {
+	background-image: url('assets/img/settings-checkbox.png');
+	padding: 0;
+    padding-left: 30px;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin-bottom: 3px;
+    display: block;
+}
+
+input[type=checkbox] + label:hover {
+	color: #aaa;
+}
+
+input[type=checkbox]:checked + label {
+	background-image: url('assets/img/settings-checkbox-checked.png');
+}
+
+.settings select, .settings input {
+	outline: none;
+}
+
+.settings .content {
+	padding: 0 10%;
+	font-size: 14px;
+}
+
+.settings h3 {
+    font-size: 24px;
+    border-bottom: 1px solid #333;
+    margin-top: 40px;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    cursor: default;
+}
+
+.settings h4 {
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 2px;
+    cursor: default;
+}
+
+#about {
+    position: absolute;
+    bottom: 40px;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+    width: 80%;
+    font-family: Verdana;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* Misc
+----------------------------------------*/
+
+.drag	{ -webkit-app-region: drag; }
+.nodrag	{ -webkit-app-region: no-drag; }
+.noselect { -webkit-user-select:none; }
+.cursor-default { cursor: default; }
+.developer { display: none !important; }
+

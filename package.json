@@ -1,0 +1,40 @@
+{
+  "name": "medianxllauncher",
+  "version": "0.3.1",
+  "description": "Median XL Launcher",
+  "productName": "Median XL",
+  "author": {
+    "name": "Quirinus, Marco",
+    "url": "http://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
+  },
+  "main": "dev/resources/app/main.js",
+  "homepage": "https://median-xl.com",
+  "postinstall": "install-app-deps",
+  "license": "ISC",
+  "build": {
+    "asar": true,
+    "appId": "com.electron.medianxllauncher",
+    "win": {
+      "icon": "dev/resources/app/assets/img/icon.ico",
+      "extraResources": [
+        {
+          "from": "dev/resources/external",
+          "to": "external",
+          "filter": ["**/*"]
+        }
+      ]
+    },
+    "directories": {
+      "app": "dev/resources/app",
+      "output": "dist"
+    }
+  },
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "build": "build -w --ia32 --dir"
+  },
+  "devDependencies": {
+    "electron": "^1.7.10",
+    "electron-builder": "^19.52.1"
+  }
+}

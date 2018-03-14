@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='UTF-8'>
+		<title>Median XL</title>
+		<link rel='stylesheet' type='text/css' href='style.css'>
+		<link rel='stylesheet' type='text/css' href='assets/fa_4.7.0/css/font-awesome.min.css'>
+		<script type='text/javascript'>
+
+			/*********************************/
+			/**** INITIALIZATION & OUTPUT ****/
+			/*********************************/
+
+			var {ipcRenderer} = require('electron'); // for sending messages to main
+			const {shell} = require('electron'); // for opening links in the external browser
+			var {BrowserWindow} = require('electron').remote;
+			var myWindows = BrowserWindow.getAllWindows();
+			var win_index = myWindows[0];
+
+			function f(fname, v = null) { ipcRenderer.send(fname, v); } // Run function from main.js
+			function ext(link) { shell.openExternal(link); } // Open link in the external browser
+		</script>
+	</head>
+	<body class='nodrag body'>
+		<div id='blackbox'></div>
+		<div class='container panel'>
+			
+			<div class='header drag noselect'>
+				<a onclick='f("close");' class='btn'><img src='assets/img/button-close.png' draggable='false'></a>
+				<a onclick='f("max");' class='btn'><img id='maximize_unmaximize' src='assets/img/button-maximize.png' draggable='false'></a>
+				<a onclick='f("min");' class='btn'><img src='assets/img/button-minimize.png' draggable='false'></a>
+			</div>
+				
+			<div class='content noselect'>
+			
+				<div id='notice'>
+					There is an update available for the Launcher! <a id='notice-restart' onclick='f("restart_update");'>Restart</a> to apply changes.
+					<i class='fa fa-times' onclick='display("notice", false);'></i>
+				</div>
+			
+				<div id='logo' onclick='ext("https://median-xl.com");'></div>
+			
+				<div id='menu'>
+					<ul class='fa-ul'>
+						<li id='btn_settings' onclick='if (!this.disabled) { f("settings"); display("blackbox"); }' disabled><i class='fa-li fa fa-cog'></i>Settings</li>
+						<li class='menu-active' onclick='ext("https://docs.median-xl.com");'><i class='fa-li fa fa-info-circle'></i>Game Guide</li>
+						<li class='menu-active' onclick='ext("https://forum.median-xl.com");'><i class='fa-li fa fa-comments'></i>Forums</li>
+					</ul>
+				</div>
+			
+				<div id='news'></div>
+
+				<div id='dl_progress'>
+					<div></div>
+				</div>
+
+				<div id='median_version'></div>
+				
+				<div id='loading'></div>
+				<button id='btn_update' class='btn btn_play btn_active' onclick='f("update_game");'>UPDATE</button>
+				<button id='btn_install' class='btn btn_play btn_active' onclick='f("install_game");'>INSTALL</button>
+				<button id='btn_play' class='btn btn_play btn_active' onclick='f("run_game");'>PLAY</button>
+				<button id='btn_restart' class='btn btn_play btn_active' onclick='f("restart");'>RESTART</button>
+			</div>
+		</div>
+
+		<script type='text/javascript'>
+		
+			/******************************/
+			/**** DISPLAY MANIPULATION ****/
+			/******************************/
+
+			// Vanilla fade-in
+			function fadeIn(element, out = false, duration = 15)
+			{
+				var opacity = out ? 1.0 : 0.0;
+				var timer = setInterval(() => {
+					if ((out && opacity <= 0.0) || (!out && opacity >= 1.0))
+					{
+						clearInterval(timer);
+						if (out) element.style.display = 'none';
+					}
+					if (!out) element.style.display = 'block';
+					element.style.opacity = opacity;
+					element.style.filter = 'alpha(opacity=' + opacity * 100 + ')';
+					opacity += out ? -0.1 : 0.1;
+				}, duration);
+			}
+			
+			// Element display handler
+			function display(id, enable = true)
+			{
+				enable = enable ? true : false;
+				if (!((id === 'loading') || (id === 'blackbox') || (id === 'notice'))) id = 'btn_' + id; //loading indicator, blackbox and notice aren't buttons, others are
+
+				switch (id)
+				{
+					case 'btn_settings': //enable/disable the settings button
+						document.getElementById(id).disabled = !enable;
+						document.getElementById(id).className = (document.getElementById(id).className).replace(' menu-active', '');
+						document.getElementById(id).className += enable ? ' menu-active' : '';
+					break;
+
+					case 'blackbox': //enable/disable dark overlay over the index page (eg. when the settings window is open, so that index appears as if it's in the background)
+						fadeIn(document.getElementById(id), !enable, 5);
+					break;
+
+					default: //other buttons/elements like play, install, update, restart, loading incicator, update notice
+						if (enable && !(id === 'notice')) document.getElementById('loading').style.display = 'none';
+						fadeIn(document.getElementById(id), !enable);
+				}
+			}
+
+			// Validation - elements are enabled/shown after the validation is finished
+			ipcRenderer.on('index_Display', (event, name, enable) => {
+				display(name, enable); // Enable/show: play, install, update, restart, settings, loading indicator, black shadow after opening settings, update notice
+			});
+
+			// Run game wait on progress cursor indicator
+			ipcRenderer.on('index_cursorProgress', (event, enable) => {
+				if (enable !== null)
+				{
+					document.getElementsByTagName('body')[0].className = (document.getElementsByTagName('body')[0].className).replace(' cursor-progress', '');
+					document.getElementsByTagName('body')[0].className += enable ? ' cursor-progress' : '';
+				}
+			});
+
+			// Toggles the maximize/unmaximize icon
+			ipcRenderer.on('index_maximized', (event, isMaximized) => {
+				if (isMaximized) document.getElementById('maximize_unmaximize').src = 'assets/img/button-unmaximize.png';
+				else if (isMaximized === false)	document.getElementById('maximize_unmaximize').src = 'assets/img/button-maximize.png';
+			});
+
+			// Display current median version
+			ipcRenderer.on('index_medianVersion', (event, version = '', latest = false) => {
+				var m_ver = document.getElementById('median_version');
+				if (latest)
+				{
+					m_ver.className = 'changelog';
+					m_ver.onclick = () => { ext('https://median-xl.com/changelog'); };
+				}
+				m_ver.innerHTML = ((version === '') ? 'Version Unknown' : version);
+				fadeIn(m_ver);
+			});
+
+			// Get news data from forum api.php
+			ipcRenderer.on('index_returnNews', (event, news) => {
+				var nel = document.getElementById('news');
+				var html = '';
+				for (let i = 0; i < news.length; i++)
+				{ 
+					var item = news[i];
+					var content = (item.content.length > 200) ? item.content.substring(0, 200) + '...' : item.content;
+					html += "<div class='panel' onclick='ext(" + '"' + 'https://forum.median-xl.com/viewtopic.php?t=' + item.topic_id + '"' + ");'>"
+							+ "<div class='news-title'><i class='fa fa-thumb-tack'></i> " + item.title + "</div>"
+							+ content
+							+ "<div class='news-time'>" + item.date + "</div>"
+							+ "</div>";
+				}
+				nel.innerHTML = html;
+				fadeIn(nel);
+			});
+
+			// Install or update files
+			ipcRenderer.on('index_DL_Progress', (event, progress) => {
+
+				var dlpr = document.getElementById('dl_progress');
+				if (dlpr.style.display !== 'block') fadeIn(dlpr);
+
+				// Get Data
+				var progress_number = progress.current / progress.size;
+				var pct = (100 * progress_number).toFixed(0) + '%';
+				const mb = 1024 * 1024;
+				var remaining = ((progress.size - progress.current) / mb).toFixed(1) + ' MB';
+				var speed = (progress.speed * 1000 / mb).toFixed(2) + ' MB/s';
+
+				// We can make use of this later - remaining time not too relevant for 300mb game
+				/*var estimated_time_left = (progress.size - progress.current)/(progress.speed*1000);
+				var etl_min = Math.floor(estimated_time_left/60);
+				var etl_sec = (estimated_time_left - etl_min*60).toFixed(0);
+				etl_sec = (etl_sec.length < 2) ? ('0' + etl_sec) : etl_sec; //padding with 0*/
+				
+				// Update bar
+				dlpr.children[0].innerHTML = '<span>Downloading: ' + remaining + ' remaining @ ' + speed + '</span><div></div>';
+				dlpr.children[0].style.width = pct;
+				win_index.setProgressBar(progress_number);
+				
+				// Download finished
+				if (progress.current === progress.size)
+				{
+					fadeIn(dlpr, true);
+					win_index.setProgressBar(-1);
+				}
+			});
+		</script>
+	</body>
+</html>

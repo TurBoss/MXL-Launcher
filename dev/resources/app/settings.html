@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='UTF-8'>
+		<title>Median XL - Settings</title>
+		<link rel='stylesheet' type='text/css' href='style.css'>
+		<link rel='stylesheet' type='text/css' href='assets/fa_4.7.0/css/font-awesome.min.css'>
+  		<script type='text/javascript'>
+
+  			/*********************************/
+  			/**** INITIALIZATION & OUTPUT ****/
+  			/*********************************/
+
+			const electron = require('electron');
+			const ipcRenderer = electron.ipcRenderer;
+			const {dialog, BrowserWindow, globalShortcut} = electron.remote; //for displaying message boxes
+
+			var myWindows = BrowserWindow.getAllWindows();
+			var win_settings = myWindows[1]; //0 = index.html
+			var dev = null;
+
+			function f(fname, v = null) { ipcRenderer.send(fname, v); } // Run function from main.js
+			function clogn(string) { f('settings_clogn', string); } // Open link in the external browser
+
+			function outSettings() //requires the global dev var to be filled
+			{
+				let settings = {};
+				//settings.windowed = ((document.getElementById('windowed').checked & !document.getElementById('windowed').disabled)?'true':'false');
+				settings.windowed = document.getElementById('windowed').checked.toString();
+				settings.no_sound = document.getElementById('no_sound').checked.toString();
+				settings.skiptobnet = document.getElementById('skiptobnet').checked.toString();
+				settings.video = document.getElementById('video').value;
+				settings.d2_path = document.getElementById('d2_path').value;
+				if (dev) settings.direct = document.getElementById('direct').checked.toString(); //TODO: get devTools.commandLine from main.js and disable/enable this
+				if (dev) settings.txt = document.getElementById('txt').checked.toString(); //TODO: get devTools.commandLine from main.js and disable/enable this
+
+				return settings;
+			}
+
+			function glideWindowed(windowed)
+			{ //save glide windowed in reg
+				if (document.getElementById('video').value === 'glide')
+					f('settings_glideWindowed', windowed);
+			}
+
+			ipcRenderer.on('settings_saveSettings', () => {
+				clogn('- settings_saveSettings');
+				f('close_settings', outSettings());
+			});
+
+			win_settings.on('focus', () => {
+				globalShortcut.register('Esc', () => { //register a hotkey listener
+					f('close_settings', outSettings());
+				});
+				globalShortcut.register('Enter', () => { //register a hotkey listener
+					f('close_settings', outSettings());
+				});
+			});
+		</script>
+	</head>
+
+	<body class='nodrag settings' onload='f("settings_getSettings");'>
+		<div class='container panel'>
+
+			<div class='header drag noselect'>
+				<a onclick='f("close_settings", outSettings());' class='btn'><img src='assets/img/button-close.png'></a>
+			</div>
+	
+			<div class='content noselect'>
+				<h3>Settings</h3>
+				
+				<input id='windowed' type='checkbox' onchange='clogn("windowed. glideWindowed()"); glideWindowed(this.checked);'><label id='windowedlabel' for='windowed'>Run the game on windowed mode</label>
+				<input id='no_sound' type='checkbox'><label for='no_sound'>Disable in-game sound</label>
+				<input id='skiptobnet' type='checkbox'><label for='skiptobnet'>Skip main menu and connect to multiplayer</label>
+				<input id='direct' type='checkbox' class='developer'><label for='direct' id='directlabel' class='developer'>Direct - load data folder</label>
+				<input id='txt' type='checkbox' class='developer'><label for='txt' id='txtlabel' class='developer'>TXT - compile .txt files</label>
+								
+				<h4>Video Mode</h4>
+				<select name='video' id='video' onchange='clogn("video. switchVideoSettings()"); switchVideoSettings(this.value); f("settings_saveRendererReg", this.value)'>
+					<option value='ddraw' id='ddraw'>DirectDraw (2D)</option>
+					<option value='d3d' id='d3d'>Direct3D</option>
+					<option value='glide' id='glide'>3DFX Glide</option>
+				</select>
+				
+				<br><a class='btn' onclick='f("settings_vidtest", document.getElementById("d2_path").value);'><i class='fa fa-video-camera'></i> Run Video Test</a>
+				<br><a class='btn' id='settings_glide' onclick='f("settings_glide", document.getElementById("d2_path").value);'><i class='fa fa-cog'></i> Glide Settings</a>
+				
+				<h4>Installation Folder</h4>
+				<input id='d2_path' type='text'>
+				<button id='btn_path_open' onclick='selectFolder();'><i class='fa fa-folder-open' aria-hidden='true'></i></button>
+				
+				<br><a class='btn' id='about' onclick='f("settings_about");'><i class='fa fa-info-circle' aria-hidden='true'></i> <span id='launcher_version'></span></a>
+			</div>
+
+		</div>
+		
+		<script type='text/javascript'>
+
+  			/******************************/
+  			/**** DISPLAY MANIPULATION ****/
+  			/******************************/
+
+			function switchVideoSettings(mode)
+			{
+				clogn('- switchVideoSettings mode: ' + mode);
+				if (mode === '') return;
+				document.getElementById('settings_glide').style.opacity = (mode === 'glide') ? 1 : 0;
+				if (mode === 'glide') glideWindowed(document.getElementById('windowed').checked); //save glide windowed in reg
+				document.getElementById('windowed').disabled = (mode === 'd3d');
+				document.getElementById('windowedlabel').style.opacity = (mode !== 'd3d') ? 1 : 0.5;
+			}
+
+			ipcRenderer.on('settings_returnGetSettings', (event, settings, _dev) => {
+				clogn('- loaded settings');
+				if (_dev)
+				{
+					document.getElementById('direct').className = ''; //!_dev ? '' : 'developer';
+					document.getElementById('directlabel').className = '';
+					document.getElementById('txt').className = '';
+					document.getElementById('txtlabel').className = '';
+				}
+				dev = _dev; //global dev variable so we know if we save dev settings
+
+				document.getElementById('windowed').checked = (settings.windowed === 'true');
+				document.getElementById('no_sound').checked = (settings.no_sound === 'true');
+				document.getElementById('direct').checked = (settings.direct === 'true');
+				document.getElementById('txt').checked = (settings.txt === 'true');
+				document.getElementById('skiptobnet').checked = (settings.skiptobnet === 'true');
+				document.getElementById('d2_path').value = settings.d2_path;
+
+				document.getElementById('video').value = (settings.video ? settings.video : 'ddraw');
+				switchVideoSettings(settings.video);
+				clogn('- displayed settings');
+			});
+
+			ipcRenderer.on('settings_returnVidtestRenderer', (event, mode) => {
+				clogn('- settings on settings_returnVidtestRenderer: switchVideoSettings()');
+				document.getElementById('video').value = mode;
+				switchVideoSettings(mode);
+			});
+
+			ipcRenderer.on('settings_returnGlideWindowed', (event, windowed) => {
+				document.getElementById('windowed').checked = windowed;
+			});
+
+			function selectFolder()
+			{
+				var _path = dialog.showOpenDialog(win_settings, {title: 'Select Diablo II folder', properties: ['openDirectory', 'showHiddenFiles'] });
+				if ((_path !== undefined) && (_path !== 'undefined')) document.getElementById('d2_path').value = _path;
+			}
+
+			ipcRenderer.on('settings_returnFolderFromReg', (event, _path) => {
+				document.getElementById('d2_path').value = _path;
+			});
+			
+			ipcRenderer.on('settings_launcherVersion', (event, version) => {
+				document.getElementById('launcher_version').innerHTML = 'Median XL Launcher ' + version;
+			});
+
+			ipcRenderer.on('settings_returnAbout', (event, about) => {
+				const text = 'Median XL\n' + about.mxlu_url + '\n\nLauncher authors: ' + about.authors + '\nBackground artist: ' + about.artist + ' - ' + about.artist_url;
+				dialog.showMessageBox(win_settings, {title: 'About Median XL Launcher', type: 'info', message: text, buttons: ["OK"] });
+			});
+		</script>
+
+	</body>
+</html>
