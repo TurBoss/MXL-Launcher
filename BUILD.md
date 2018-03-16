@@ -4,16 +4,20 @@ ____
 
 # Source Files
 Source files are split between the Launcher and Builder.
-* Developer version of the Launcher is in [dev](dev). Run it with [dev_test.bat](dev_test.bat).
+* Developer version of the Launcher is in [dev](dev). Run it with [test.bat](test.bat).
 * Launcher source code is in [dev\resources\app](dev\resources\app).
 * Setup and Update scripts sources are in the [installer](installer) folder.
 * Launcher assets, mod installation files, and external resources are in [dev\resources\app\assets](dev\resources\app\assets), [dev\resources\app\installation](dev\resources\app\installation), and [dev\resources\external](dev\resources\external), respectively.
 * Build the Launcher files/setup/update with [make.bat](make.bat). They are built to the [dist](dist) folder.
+* Update the Builder and Launcher modules, and the dev test version of the Launcher with [update.bat](update.bat).
 
 #### Files in detail
 Located in the [root](https://github.com/Median-XL/) of the repository:
-* [dev_test.bat](dev_test.bat) - quick testing of source code changes. I suggest you change `devTools.enableConsoleLog` option in [dev\resources\app\main.js](dev\resources\app\main.js) from `false` to `true` to see the command line debug output.
+* [test.bat](test.bat) - quick testing of source code changes. I suggest you change `devTools.enableConsoleLog` option in [dev\resources\app\main.js](dev\resources\app\main.js) from `false` to `true` to see the command line debug output.
 * [make.bat](make.bat) - builds the Launcher files/setup/update. Checks version number missmatches in all **package.json**s. Asks if update should contain just the app folder or all binaries.  
+* [update.bat](update.bat) - updates the Launcher modules, Builder modules, and dev test version of the Launcher binaries and modules.
+* [make_setup.bat](make_setup.bat) - makes the Setup and Updates for the Launcher in [dist](dist). Used by [make.bat](make.bat).
+* [jq.exe](jq.exe) - tool for easy json manipulation.
 
 Located in [dev\resources\app](dev\resources\app):
 * [main.js](dev\resources\app\main.js) - main app file: app logic handling, load modules/includes, initialize state variables
@@ -57,10 +61,8 @@ Most of the building/compiling process is handled by the [make.bat](make.bat) ba
 
 #### HOW TO CREATE/UPDATE THE BUILDER?
 1. Uninstall *Node.js* and install it again to get the new version.
-2. Copy [package.json](package.json), [make.bat](make.bat), [dev_test.bat](dev_test.bat), [installer](installer), and [dev](dev) to a new folder.
-3. Delete `devDependecies` from the copied **package.json**.
-4. Open the *command prompt* in the folder where the copied [package.json](package.json) is and install *electron* and *electron-builder* by typing `npm install <module name> --save-dev` for each one.
-5. (Optional) To update the binaries of the dev Launcher used for testing: Build new Launcher binaries with [make.bat](make.bat), and replace the binaries in [dev](dev) with the ones from the Launcher folder in [dist](dist) (keep the [dev\resources\app](dev\resources\app) folder, don't copy **app.asar**).
+2. (Optional) To create a new Builder folder, copy [package.json](package.json), [make.bat](make.bat), [make_setup.bat](make_setup.bat), [test.bat](test.bat), [update.bat](update.bat), [jq.exe](jq.exe), [installer](installer), and [dev](dev) to a new folder.
+3. Run [update.bat](update.bat) in the Builder folder you wish to create/update.
 
 ____
 
@@ -81,4 +83,5 @@ ____
 * *xdelta* - creating a patch: `"path to xdelta3.exe" -v -f -A= -S lzma -9 -B 419430400 -W 16777216 -s "path_original_file" "path_new_file" "path_xpatch_file"`, and applying a patch: `"path to xdelta3.exe" -d -f -s "path_original_file" "path_xpatch_file" "path_new_file"`.
 * SHA1 hash of files can be calculated with `"path to 7za.exe" h -scrcsha1 "path to file"`.
 * **\*.asar** files can be packed with `asar pack "path_source_folder" "path_filename.asar"`, and unpacked with `asar extract "path_filename.asar" "path_destination_folder"` if you have *asar* installed (`npm install asar -g` to install).
+* 
 * You can manually change the metadata/icons of executables with the [ResourceHacker](http://www.angusj.com/resourcehacker/resource_hacker.zip) program instead of doing it with **package.json**s and *Inno Setup* scripts.

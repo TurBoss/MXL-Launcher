@@ -1,9 +1,5 @@
 'use strict';
 
-//If you're reading this, hello! You shouldn't be here.
-//If you borrow code, please give credit.
-//The code is messy, but it will improve.
-
 /*************************************/
 /********* MODULES & INCLUDES ********/
 /*************************************/
