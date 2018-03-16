@@ -13,7 +13,7 @@ rem Finds version from the Builder package.json.
 for /f %%i in ('jq.exe -r .version package.json') do set versionB=%%i
 if not "%version%" == "%versionB%" (
 	echo The Launcher version %version% doesnt match the Builder version %versionB%.
-	echo Make sure they are the same in "MXL_Launcher\package.json" and "MXL_Launcher\dev\resources\app\package.json".
+	echo Make sure they are the same in "package.json" and "dev\resources\app\package.json".
 	echo.
 	pause
 	exit
@@ -22,7 +22,7 @@ rem Finds version from the Builder package-lock.json.
 for /f %%i in ('jq.exe -r .version package-lock.json') do set versionBL=%%i
 if not "%version%" == "%versionBL%" (
 	echo The Launcher version %version% doesnt match the Builder lock version %versionBL%.
-	echo Make sure they are the same in "MXL_Launcher\package.json" and "MXL_Launcher\dev\resources\app\package-lock.json".
+	echo Make sure they are the same in "package.json" and "dev\resources\app\package-lock.json".
 	echo.
 	pause
 	exit
@@ -33,6 +33,14 @@ echo.
 echo Deleting old files.
 IF EXIST "dist\win-ia32-unpacked" (rmdir "dist\win-ia32-unpacked" /s /q)
 IF EXIST "dist\electron-builder.yaml" (del /q "dist\electron-builder.yaml")
+echo.
+
+if /i not "%make_setup%" == "N" (
+	echo Make sure all "devTools" options from
+	echo "dev\resources\app\main.js" are "false" before continuing.
+	pause
+	echo.
+)
 
 echo Building the Launcher:
 call npm run build

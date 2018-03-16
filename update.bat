@@ -8,12 +8,12 @@ echo ******************************
 echo.
 
 echo Updates:
-echo  	"MXL-Launcher\node_modules"
-echo 	"MXL-Launcher\dev\resources\app\node_modules"
-echo 	"MXL-Launcher\dev" (except the "MXL-Launcher\dev\resources\app" folder)
-echo 	"MXL-Launcher\package.json"
-echo 	"MXL-Launcher\package-lock.json"
-echo 	"MXL-Launcher\dev\resources\app\package.json"
+echo 	"node_modules"
+echo 	"dev\resources\app\node_modules"
+echo 	"dev" (except the "dev\resources\app" folder)
+echo 	"package.json"
+echo 	"package-lock.json"
+echo 	"dev\resources\app\package.json"
 echo.
 echo Before proceeding, it is a good idea to uninstall Node.js,
 echo and then install it again to update it.
@@ -42,12 +42,12 @@ IF NOT EXIST "dev\resources\app" (
 	exit
 )
 IF NOT EXIST "package.json" (
-	echo "MXL-Launcher\package.json" missing, aborting.
+	echo "package.json" missing, aborting.
 	pause
 	exit
 )
 IF NOT EXIST "dev\resources\app\package.json" (
-	echo "MXL-Launcher\dev\resources\app\package.json" missing, aborting.
+	echo "dev\resources\app\package.json" missing, aborting.
 	pause
 	exit
 )
@@ -75,7 +75,7 @@ xcopy "app\*" "dev\resources\app\" /y /s /e /i /q /r
 timeout 1 > nul
 rmdir "app" /s /q
 
-echo Getting module names, and deleting them from "MXL-Launcher\package.json" and "MXL-Launcher\dev\resources\app\package.json".
+echo Getting module names, and deleting them from "package.json" and "dev\resources\app\package.json".
 "jq.exe" -r ".devDependencies | to_entries[] | .key" "package.json" > "builder_modules.txt"
 "jq.exe" "del(.devDependencies)" "package.json" > "temp_package.json"
 timeout 1 > nul
@@ -144,3 +144,4 @@ echo ************************
 echo *** UPDATES FINISHED ***
 echo ************************
 echo.
+pause
