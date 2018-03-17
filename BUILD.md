@@ -2,14 +2,17 @@ Here are some of the details about building and source/resource files.
 
 ____
 
-# Source Files
-Source files are split between the Launcher and Builder.
-* Developer version of the Launcher is in [dev](dev). Run it with [test.bat](test.bat).
+# Files
+The three main scripts are:
+* Create/update the Builder and Launcher modules, and the dev test version of the Launcher with [update.bat](update.bat).
+* To publish, build the Launcher files/setup/update with [make.bat](make.bat). They are built to the [dist](dist) folder.
+* Developer/production version of the Launcher is in [dev](dev). Run it with [test.bat](test.bat).
+
+Source files are split between the Launcher and Builder:
 * Launcher source code is in [dev\resources\app](dev\resources\app).
 * Setup and Update scripts sources are in the [installer](installer) folder.
 * Launcher assets, mod installation files, and external resources are in [dev\resources\app\assets](dev\resources\app\assets), [dev\resources\app\installation](dev\resources\app\installation), and [dev\resources\external](dev\resources\external), respectively.
-* Build the Launcher files/setup/update with [make.bat](make.bat). They are built to the [dist](dist) folder.
-* Update the Builder and Launcher modules, and the dev test version of the Launcher with [update.bat](update.bat).
+
 
 #### Files in detail
 Located in the [root](https://github.com/Median-XL/) of the repository:
@@ -43,7 +46,8 @@ Most of the building/compiling process is handled by the [make.bat](make.bat) ba
 
 ## PREREQUISITES
 1. Install [Node.js](https://nodejs.org/en/download/), with *npm*.
-2. (Optional) Install [Inno Setup 5](http://www.jrsoftware.org/download.php/ispack-unicode.exe) to get the *Inno Script Studio* editor to edit *Inno Setup Script* files more easily.
+2. Run [update.bat](update.bat) at least once after pulling the repository, or to update the Builder/Launcher modules.
+3. (Optional) Install [Inno Setup 5](http://www.jrsoftware.org/download.php/ispack-unicode.exe) to get the *Inno Script Studio* editor to edit *Inno Setup Script* files more easily.
 
 ## BEFORE BUILDING
 1. Turn all `devTools` options from [dev\resources\app\main.js](dev\resources\app\main.js) to `false`.

@@ -14,10 +14,10 @@ ____
 
 ## Quick Guide
 
+* Run [update.bat](update.bat) to create the Builder and Launcher modules, and the dev test version of the Launcher after pulling the repo.
+* [test.bat](test.bat) runs the dev test version of the Launcher, which is useful for quickly testing production code without building every time.  
+* [make.bat](make.bat) creates the Launcher files/setup/update in the [dist](dist) folder.
 * Source code and assets/resources are in [dev\resources\app](dev\resources\app), [dev\resources\external](dev\resources\external), and [installer](installer).  
-* [make.bat](make.bat) creates the Launcher files/setup/update.  
-* [test.bat](test.bat) runs the dev test version of the Launcher, which is useful for quickly testing code without building every time.  
-* [update.bat](update.bat) updates the Builder and Launcher modules, and the dev test version of the Launcher.  
 * For additional building and details, see [BUILD](BUILD.md).
 
 ## Screenshots

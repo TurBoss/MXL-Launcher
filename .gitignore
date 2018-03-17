@@ -1,3 +1,6 @@
+node_modules/
 dist/
-dev/error_log.txt
-dev/settings.json
+dev/*
+!dev/resources/external/
+!dev/resources/app/
+dev/resources/app/node_modules/

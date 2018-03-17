@@ -1,16 +1,16 @@
 {
-	"name": "medianxllauncher",
-	"version": "0.3.1",
-	"description": "Median XL Launcher",
-	"productName": "Median XL",
-	"author": {
-		"name": "Quirinus, Marco",
-		"url": "http://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
-	},
-	"main": "main.js",
-	"homepage": "https://median-xl.com",
-	"dependencies": {
-		"async": "^2.1.4",
-		"fs-extra": "^1.0.0"
-	}
+  "name": "medianxllauncher",
+  "version": "0.3.1",
+  "description": "Median XL Launcher",
+  "productName": "Median XL",
+  "author": {
+    "name": "Quirinus, Marco",
+    "url": "http://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
+  },
+  "main": "main.js",
+  "homepage": "https://median-xl.com",
+  "dependencies": {
+    "async": "^2.6.0",
+    "fs-extra": "^5.0.0"
+  }
 }
