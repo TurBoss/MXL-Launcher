@@ -12,17 +12,7 @@ global.dialog = electron.dialog;
 global.path = require('path'); //for resolving/joining complicated paths
 global.async = require('async'); //for chaining or parallel async callbacks
 
-//***** Internal modules/includes *****
-// - some require global constants/functions from each other, and from main.js
-require('./func-help.js'); //loads basic/helper/misc functions (read/write files, console logging, etc.)
-global.reg = require('./reg.js'); //registry functions, read, write, etc.
-require('./const.js'); //loads constants
-require('./buttons.js'); //loads button event functions, including display()
-require('./func-main.js'); //loads main functions
-
-/*************************************/
 /************ DEV OPTIONS ************/
-/*************************************/
 
 global.devTools = { //for non-dev build, all are false, except the hotkeys obviously
 	enableConsoleLog: true, //enables logging to the console (for example, if started from the command line)
@@ -31,6 +21,14 @@ global.devTools = { //for non-dev build, all are false, except the hotkeys obvio
 	commandLine: false, //shows the command line arguments for devs in settings.html (-txt -direct)
 	disableUpdates: false, //disables updates
 };
+
+//***** Internal modules/includes *****
+// - some require global constants/functions from each other, and from main.js
+require('./func-help.js'); //loads basic/helper/misc functions (read/write files, console logging, etc.)
+global.reg = require('./reg.js'); //registry functions, read, write, etc.
+require('./const.js'); //loads constants
+require('./buttons.js'); //loads button event functions, including display()
+require('./func-main.js'); //loads main functions
 
 /*************************************/
 /************** STATES ***************/

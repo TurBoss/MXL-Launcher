@@ -6,7 +6,7 @@ ____
 The three main scripts are:
 * Create/update the Builder and Launcher modules, and the dev test version of the Launcher with [update.bat](update.bat).
 * To publish, build the Launcher files/setup/update with [make.bat](make.bat). They are built to the [dist](dist) folder.
-* Developer/production version of the Launcher is in [dev](dev). Run it with [test.bat](test.bat).
+* Developer version of the Launcher is in [dev](dev). Run it with [test.bat](test.bat).
 
 Source files are split between the Launcher and Builder:
 * Launcher source code is in [dev\resources\app](dev\resources\app).

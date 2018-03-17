@@ -8,15 +8,15 @@ The Median XL Launcher takes care of:
 * file version mismatches & corruptions
 * easy manipulation of Diablo II settings
 
-It is built on [Node.js](https://nodejs.org/) & [Electron](https://electronjs.org/), and compiled to Setup & Update files via [Inno Setup](http://www.jrsoftware.org/isinfo.php) scripts. Archives are handled with [7-zip](https://www.7-zip.org/), and versions are patched/updated with delta files created with [Xdelta3](http://xdelta.org/). JSON files are manipulated with [jq](https://stedolan.github.io/jq/).
+It is built on [Node.js](https://nodejs.org/) & [Electron](https://electronjs.org/), and compiled to Setup & Update files via [Inno Setup](http://www.jrsoftware.org/isinfo.php) scripts. Archives are handled with [7-zip](https://www.7-zip.org/), and versions are patched/updated with difference files created with [Xdelta3](http://xdelta.org/). JSON files are manipulated with [jq](https://stedolan.github.io/jq/).
 
 ____
 
 ## Quick Guide
 
-* Run [update.bat](update.bat) to create the Builder and Launcher modules, and the dev test version of the Launcher after pulling the repo.
-* [test.bat](test.bat) runs the dev test version of the Launcher, which is useful for quickly testing production code without building every time.  
-* [make.bat](make.bat) creates the Launcher files/setup/update in the [dist](dist) folder.
+* Run [update.bat](update.bat) to create Builder and Launcher modules, and the dev test version of the Launcher after pulling the repo.
+* [test.bat](test.bat) runs the dev test version of the Launcher, useful for quickly testing dev code without building every time.  
+* [make.bat](make.bat) creates the Launcher files/setup/update in the [dist](dist) folder, ready for publishing.
 * Source code and assets/resources are in [dev\resources\app](dev\resources\app), [dev\resources\external](dev\resources\external), and [installer](installer).  
 * For additional building and details, see [BUILD](BUILD.md).
 
