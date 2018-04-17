@@ -26,6 +26,7 @@ AppUpdatesURL={#MyAppURL}
 ;AppCopyright=
 ;AppComments=
 AppContact={#MyAppSupportURL}
+MinVersion=6.0
 
 ;setup.exe info:
 VersionInfoVersion={#MyAppVersion}

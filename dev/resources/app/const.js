@@ -587,8 +587,8 @@ global.game = { //order of versions is important, put newer versions at the end
 		'af0ea93d2a652ceb11ac01ee2e4ae1ef613444c2', //v114d
 	],
 };
-global.Fog_dll_m2017_sha1 = '206880233ee88a25d8824f58621e3fecb5a94b0d';
 global.Fog_dll_v113c_sha1 = 'fc9e40e6b81e8c65703afdaaae010aace85d0969';
+global.Fog_dll_m2017_sha1 = '206880233ee88a25d8824f58621e3fecb5a94b0d';
 
 /***** GAME COMMAND LINE ARGUMENTS *****/
 global.game_cmd_arg =

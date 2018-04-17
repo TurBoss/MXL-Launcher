@@ -417,7 +417,7 @@ function downloadPatch(full, callback)
 
 	function _downloadAndApply(_url, file_name, isFull /* or xdelta */, _callback)
 	{
-		function _apply(destination_path, patch_d2_mpq_path, patch_d2_mpq_temp_path, isFull, _callback)
+		function _apply(destination_path, patch_d2_mpq_path, patch_d2_mpq_temp_path, isFull, __callback)
 		{
 			if (isFull)
 			{
@@ -425,7 +425,7 @@ function downloadPatch(full, callback)
 				unzipFile(destination_path, settings.d2_path, (err, stdout, stderr) => { //check output, is it text or exit code
 					if (err) { clogn(err); clogn(stderr); }
 					if (!err && pathExists(destination_path)) delFile(destination_path);
-					_callback(err);
+					__callback(err);
 				});
 			}
 			else
@@ -439,7 +439,7 @@ function downloadPatch(full, callback)
 						renameFile(patch_d2_mpq_temp_path, patch_d2_mpq_path);
 					}
 					if (pathExists(patch_d2_mpq_temp_path)) delFile(patch_d2_mpq_temp_path);
-					_callback(err);
+					__callback(err);
 				});
 			}
 		}
@@ -472,7 +472,7 @@ function downloadPatch(full, callback)
 	{
 		let file_name = sprintf(filename.mod_install, version.median.latest);
 		_downloadAndApply(url.patch_d2_full, file_name, true, (err) => {
-			if (err) return _callback(err);
+			if (err) return callback(err);
 			getDlls(version.median.latest, callback); //m2017 starts using dlls
 		});
 	}
@@ -484,7 +484,7 @@ function downloadPatch(full, callback)
 					if (err) return _callback(err);
 					getDlls(_version, _callback); //m2017 starts using dll
 				});
-			}, function _callback(err) {
+			}, (err) => {
 				if (err)
 				{
 					clogn(err);
@@ -762,7 +762,7 @@ function checkGameHash(callback)
 	function _patchGame(err, type = null)
 	{
 		clogn('_patchGame() type: ' + (!isNull(type) ? type : 'null'));
-		if (err) logn(err);
+		if (err) log(err);
 
 		clogn('paths.file.hacked_D2gfx_dll = ' + paths.file.hacked_D2gfx_dll + ', D2gfx_dll_path = ' + D2gfx_dll_path);
 		copyFile(paths.file.hacked_D2gfx_dll, D2gfx_dll_path); //hacked 1.13c D2gfx.dll that allows multiple D2 instances to run at the same time
@@ -1146,7 +1146,7 @@ function checkDlls(callback)
 			if (err)
 			{
 				status.checks.dll = _error.dll.hash;
-				callback(null);
+				return callback(null);
 			}
 			if (hash !== Fog_dll_m2017_sha1)
 			{
@@ -1155,7 +1155,7 @@ function checkDlls(callback)
 				return callback(null);
 			}
 			status.checks.dll = true;
-			callback(null);
+			return callback(null);
 		});
 	}
 }

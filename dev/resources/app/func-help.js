@@ -304,12 +304,17 @@ function getJSON(url, callback)
 		let rawData = '';
 		res.on('data', (chunk) => rawData += chunk);
 		res.on('end', () => {
-			let parsedData = JSON.parse(rawData);
+			try {
+				let parsedData = JSON.parse(rawData);
+			} catch (err) {
+				log(err);
+				return callback(err);
+			}
 			callback(null, parsedData);
 		});
-	}).on('error', (e) => {
-		log(e);
-		callback(e);
+	}).on('error', (err) => {
+		log(err);
+		callback(err);
 	});
 }
 

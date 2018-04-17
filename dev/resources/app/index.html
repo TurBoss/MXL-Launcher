@@ -150,7 +150,7 @@
 				for (let i = 0; i < news.length; i++)
 				{ 
 					var item = news[i];
-					var content = (item.content.length > 200) ? item.content.substring(0, 200) + '...' : item.content;
+					var content = item.content ? ((item.content.length > 200) ? item.content.substring(0, 200) + '...' : item.content) : '';
 					html += "<div class='panel' onclick='ext(" + '"' + 'https://forum.median-xl.com/viewtopic.php?t=' + item.topic_id + '"' + ");'>"
 							+ "<div class='news-title'><i class='fa fa-thumb-tack'></i> " + item.title + "</div>"
 							+ content
