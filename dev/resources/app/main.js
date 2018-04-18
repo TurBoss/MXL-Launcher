@@ -152,7 +152,7 @@ app.on('ready', () => {
 			if (_isLocalUpdateReady()) return restartLauncherAndRun(paths.file.update, inno_silent_levels.verysilent, exit_codes.update); //sync; paths.file.update is set by _isLocalUpdateReady
 			getVersionInfo((err) => { //sets --> version; get the latest versions info from online
 				status.online = !err;
-				if (!status.online) return;
+				if (!status.online) return edialog('Median XL - No version info', 'Could not get version information from the internet, using the currently installed one.')
 				fetchLauncherUpdates((err2, update_path) => {
 					if (update_path)
 					{

@@ -156,7 +156,7 @@ paths.file =
 };
 
 /***** URLS *****/
-global.base_get_url = 'http://get.median-xl.com/launcher/get.php?get=';
+global.base_get_url = 'http://get.median-xl.com/launcher/?get=';
 global.url =
 {
 	version: base_get_url + 'versions', //we check for version updates and file hashes here

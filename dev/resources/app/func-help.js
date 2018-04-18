@@ -306,11 +306,11 @@ function getJSON(url, callback)
 		res.on('end', () => {
 			try {
 				let parsedData = JSON.parse(rawData);
+				return callback(null, parsedData);
 			} catch (err) {
 				log(err);
 				return callback(err);
 			}
-			callback(null, parsedData);
 		});
 	}).on('error', (err) => {
 		log(err);
@@ -326,12 +326,12 @@ function getFileHashSHA1(_path, callback)
 		if (err)
 		{
 			log(err);
-			callback(err);
+			return callback(err);
 		}
 		else if (stderr)
 		{
 			log(stderr);
-			callback(stderr);
+			return callback(stderr);
 		}
 		else
 		{
@@ -345,7 +345,7 @@ function getFileHashSHA1(_path, callback)
 			}
 			let hash = stdout.split('\n')[8].substring(0, 40).toLowerCase();
 			clogn('getFileHashSHA1() ' + _path + ', sha1 hash: ' + hash);
-			callback(null, hash);
+			return callback(null, hash);
 		}
 	});
 }
