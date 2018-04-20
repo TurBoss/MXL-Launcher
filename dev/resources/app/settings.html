@@ -70,7 +70,7 @@
 				<h3>Settings</h3>
 				
 				<input id='windowed' type='checkbox' onchange='clogn("windowed. glideWindowed()"); glideWindowed(this.checked);'><label id='windowedlabel' for='windowed'>Run the game in windowed mode</label>
-				<input id='no_sound' type='checkbox'><label for='no_sound'>Disable in-game sound</label>
+				<input id='no_sound' type='checkbox' onchange='noSoundWarning(this.checked);'><label for='no_sound'>Disable in-game sound</label>
 				<input id='skiptobnet' type='checkbox'><label for='skiptobnet'>Skip main menu and connect to multiplayer</label>
 				<input id='direct' type='checkbox' class='developer'><label for='direct' id='directlabel' class='developer'>Direct - load data folder</label>
 				<input id='txt' type='checkbox' class='developer'><label for='txt' id='txtlabel' class='developer'>TXT - compile .txt files</label>
@@ -99,6 +99,11 @@
   			/******************************/
   			/**** DISPLAY MANIPULATION ****/
   			/******************************/
+
+  			function noSoundWarning(checked)
+  			{
+  				if (checked) dialog.showMessageBox(win_settings, {title: 'Warning', type: 'info', message: 'Turning this on will cause the game to crash at act end cinematics.', buttons: ["OK"] });
+  			}
 
 			function switchVideoSettings(mode)
 			{

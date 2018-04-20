@@ -875,16 +875,7 @@ function saveGlideWindowedReg(windowed, callback = null)
 {
 	clogn('saveGlideWindowedReg()');
 
-	windowed = windowed ? '1' : '0';
-	var glide_windowed_reg = {
-		[glide_key]: {
-			[glide_windowed_val]: {
-				type: 'REG_DWORD',
-				value: windowed
-			}
-		}
-	};
-
+	var glide_windowed_reg = reg.toObject(glide_key, glide_windowed_val, windowed ? '1' : '0', 'REG_DWORD');
 	reg.write(glide_windowed_reg, (err) => {
 		if (err) log('Unable to save Glide windowed registry entry.\r\n' + err.stack);
 		if (callback) callback(err);
@@ -960,17 +951,26 @@ function checkD2Compatibility(callback)
 {
 	clogn('checkD2Compatibility()');
 
-	//add compatibility for D2VidTst.exe (doesn't start on w10 otherwise)
+	//add win xp compatibility for D2VidTst.exe, doesn't start on w10 otherwise
+	//add win xp compatibility for d2, otherwise it produces an error on exit, mousewheel doesn't register on keybind ingame, etc.
+	//add run as admin for d2, otherwise produces "Failed to retrieve process." error on start
+
+	let D2VidTst_exe_options = ['~', compatiblity_run_as_admin, compatiblity_xp].join(' ');
 	let D2VidTst_exe_target_path = settings.d2_path + '\\' + filename.d2vidtst_exe;
-	let data = '~ ' + compatiblity_xp;
-	let reg_type = 'REG_SZ';
-	let overwrite = true;
-	let _reg = reg.toObject(compatiblity_key, D2VidTst_exe_target_path, data, reg_type);
-	reg.checkKeyValAdd(compatiblity_key, D2VidTst_exe_target_path, _reg, overwrite, (err, diff, result, __reg) => {
-		//if (err) callback(err);
-		if (err) log('reg.checkKeyValAdd. compatiblity_key: ' + compatiblity_key + ', D2VidTst_exe_target_path: '+ D2VidTst_exe_target_path + ', data: '+ data + ', reg_type: '+ reg_type + ', overwrite: '+ overwrite + ', err: '+ err + ', diff: '+ diff + ', result: ' + JSONToString(result) + ', _reg: ' + JSONToString(__reg));
-		callback(null);
-	});
+	let game_exe_path = settings.d2_path + '\\' + filename.game_exe;
+	let diablo_ii_exe_path = settings.d2_path + '\\' + filename.diablo_ii_exe;
+
+	async.parallel(
+		[
+			(_callback) => reg.runAsOptions(D2VidTst_exe_target_path, D2VidTst_exe_options, _callback),
+			(_callback) => reg.addAdminWinXPSP3(game_exe_path, _callback),
+			(_callback) => reg.addAdminWinXPSP3(diablo_ii_exe_path, _callback),
+		],
+		(err) => {
+			if (err) log('Error while adding compatibility options.\r\n' + err.stack);
+			callback(err);
+		}
+	);
 }
 
 //add TSW to the registry

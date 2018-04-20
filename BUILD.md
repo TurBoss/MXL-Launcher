@@ -64,7 +64,7 @@ Most of the building/compiling process is handled by the [make.bat](make.bat) ba
 3. Commit to [MXL-Launcher](https://gitlab.com/Median-XL/MXL-Launcher), and create a tag with the new version numbers.
 
 #### HOW TO CREATE/UPDATE THE BUILDER?
-1. Uninstall *Node.js* and install it again to get the new version.
+1. Check *Node.js* version `npm -v`. If it's outdated, update with `npm -g i npm`. If that doesn't work uninstall *Node.js* and install it again to get the new version.
 2. (Optional) To create a new Builder folder, copy [package.json](package.json), [make.bat](make.bat), [make_setup.bat](make_setup.bat), [test.bat](test.bat), [update.bat](update.bat), [jq.exe](jq.exe), [installer](installer), and [dev](dev) to a new folder.
 3. Run [update.bat](update.bat) in the Builder folder you wish to create/update.
 

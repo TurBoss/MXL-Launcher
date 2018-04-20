@@ -42,6 +42,7 @@ var export_func =
 	getFileSize,
 	getFileHashSHA1,
 
+	isRunningAsAdmin,
 	runProgram,
 	unzipFile,
 	patch_xdelta,
@@ -198,6 +199,16 @@ function getFileSize(_path)
 function createFolder(_path)
 {
 	fs.mkdirSync(_path);
+}
+
+
+//checks if the app is running with administrator privileges
+function isRunningAsAdmin(callback) {
+	var exec = require('child_process').exec;
+	exec('NET SESSION', (err, so, se) => {
+		let admin = (se.length === 0);
+		callback(err, admin);
+	});
 }
 
 //runs a program

@@ -130,11 +130,13 @@ app.on('ready', () => {
 	clogn('app ready');
 
 	//most important part of the program
-	_getIsRunAsAdmin((err_admin, admin) => {
+	isRunningAsAdmin((err_admin, admin) => {
 		if (err_admin) { log(err_admin); admin = false;	}
+		clogn('Running as admin: ' + admin);
+		
 		if (!admin)
 		{
-			_makeLauncherRunAsAdmin(() => { //makes the app run as admin the next time it starts
+			reg.addAdmin(paths.file.launcher_exe, (err_add_admin) => { //makes the app run as admin the next time it starts
 				idialog('Median XL - Administrator', 'Please run the launcher with administrator privileges.');
 				app.exit(exit_codes.error);
 			});
@@ -152,7 +154,7 @@ app.on('ready', () => {
 			if (_isLocalUpdateReady()) return restartLauncherAndRun(paths.file.update, inno_silent_levels.verysilent, exit_codes.update); //sync; paths.file.update is set by _isLocalUpdateReady
 			getVersionInfo((err) => { //sets --> version; get the latest versions info from online
 				status.online = !err;
-				if (!status.online) return edialog('Median XL - No version info', 'Could not get version information from the internet, using the currently installed one.')
+				if (!status.online) return edialog('Median XL - No version information', 'Could not get version information from the internet, using the currently installed one.')
 				fetchLauncherUpdates((err2, update_path) => {
 					if (update_path)
 					{
@@ -204,27 +206,6 @@ app.on('ready', () => {
 
 
 	/*** HOISTED FUNCTIONS ***/
-
-	function _getIsRunAsAdmin(callback) {
-		var exec = require('child_process').exec;
-		exec('NET SESSION', (err, so, se) => {
-			let admin = (se.length === 0);
-			clogn('Launcher admin: ' + admin);
-			callback(err, admin);
-		});
-	}
-
-	//add run as admin flag to the launcher exe - makes the app run as admin the next time it starts
-	function _makeLauncherRunAsAdmin(callback = null)
-	{
-		let data = '~ ' + compatiblity_run_as_admin;
-		let reg_type = 'REG_SZ';
-		let _reg = reg.toObject(compatiblity_key, paths.file.launcher_exe, data, reg_type);
-		reg.write(_reg, (err) => {
-			if (err) log('reg.write. compatiblity_key: ' + compatiblity_key + ', paths.file.launcher_exe: '+ paths.file.launcher_exe + ', data: '+ data + ', reg_type: '+ reg_type + ', err: '+ err + ', _reg: ' + JSONToString(_reg));
-			if (callback) callback(err);
-		});
-	}
 
 	function _getNews()
 	{

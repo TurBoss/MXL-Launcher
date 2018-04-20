@@ -8,8 +8,41 @@ if (typeof path === 'undefined') global.path = require('path'); //for resolving/
 
 /********* EXPORTS ********/
 
-module.exports = { read, write, existsKey, existsKeyVal, checkResultKeyVal, checkKeyValAdd, toObject };
+module.exports = {
+	read,
+	write,
+	existsKey,
+	existsKeyVal,
+	checkResultKeyVal,
+	checkKeyValAdd,
 
+	runAsOptions,
+	addAdmin,
+	addAdminWinXPSP3,
+
+	toObject,
+};
+
+
+/** COMPATIBILITY CONSTANTS **/
+
+global.compatiblity_key = 'HKCU\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers';
+//global.compatiblity_all_key = 'HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers'; //all users, requires admin probably
+global.compatiblity_run_as_admin = 'RUNASADMIN'; //Run program as an administrator
+//global.compatiblity_disable_themes = 'DISABLETHEMES'; //Disable Visual Themes
+//global.compatiblity_disable_composition = 'DISABLEDWM'; //Disable Desktop Composition
+global.compatiblity_xp = 'WINXPSP3';
+global.compatiblity_modes = [
+	'WIN95',
+	'WIN98',
+	'WINXPSP2',
+	'WINXPSP3',
+	'VISTARTM',
+	'VISTASP1',
+	'VISTASP2',
+	'WIN7RTM',
+	'WIN8RTM'
+];
 
 //*****************************
 //******* REG FUNCTIONS *******
@@ -245,7 +278,7 @@ function write(reg_data, callback)
 			data = data.join('\\0');
 		if (isNull(data))
 		{
-			console.log('null data: reg_data: ' + JSONToString(reg_data) + ', key: ' + key + ', val: ' + val + ', type: ' + type + ', data: ' + data);
+			console.log('null data: reg_data: ' + JSON.stringify(reg_data, null, '\t') + ', key: ' + key + ', val: ' + val + ', type: ' + type + ', data: ' + data);
 			data = '';
 		}
 		if (!isNull(val))
@@ -272,7 +305,7 @@ function write(reg_data, callback)
 
 //creates an object from key_name, val_name, val_data, val_type.
 //kinda useless function, since I need objects with multiple values sometimes.
-function toObject(key_name, val_name, val_data, val_type)
+function toObject(key_name, val_name, val_data, val_type = 'REG_SZ')
 {
 	let regObj = {
 		[key_name]: {
@@ -298,19 +331,89 @@ function checkKeyValAdd(key, val, reg, overwrite, callback)
 		if (err) log(err);
 
 		var diff = (!exists_key || !exists_val) ? null : (result[key].values[val].value !== reg[key][val].value);
+		if (exists_key && exists_val && !(overwrite && diff)) return callback(null, diff, result, reg);
 
-		if (exists_key && exists_val && !(overwrite && diff))
-			callback(null, diff, result, reg);
-		else
+		write(reg, (_err) => {
+			if (_err)
+			{
+				log(_err);
+				return callback(_err);
+			}
+			callback(null, diff);
+		});
+	});
+}
+
+//adds "run as" options, deletes all other options. eg. run as admin + run in win xp sp3 compatibility mode, delete old options
+function runAsOptions(_path, _options, callback = null)
+{
+	if (!isArray(_options)) _options = [_options];
+	_options = ['~', ..._options].join(' ');
+	let _reg = toObject(compatiblity_key, _path, _options);
+	write(_reg, (err) => callback ? callback(err) : undefined);
+}
+
+//makes the program run as admin, keeps other user settings
+function addAdmin(_path, callback = null)
+{
+	let overwrite = false;
+	let _options = ['~', compatiblity_run_as_admin].join(' ');
+	let _reg = reg.toObject(compatiblity_key, _path, _options);
+	checkKeyValAdd(compatiblity_key, _path, _reg, overwrite, (err, diff, result, __reg) => {
+		if (err)
 		{
-			write(reg, (_err) => {
-				if (_err)
-				{
-					log(_err);
-					return callback(_err);
-				}
-				callback(null, diff);
-			});
+			log('Could not add "Run as Admin" option for "' + _path + '".');
+			return callback ? callback(err) : undefined;
 		}
+		if (!diff) return callback ? callback(null) : undefined;
+
+		let reg_other = result[compatiblity_key].values[_path].value; //save old values
+		reg_other = reg_other.replace('~ ', '').trim();
+		reg_other = reg_other.replace(compatiblity_run_as_admin, '').trim();
+		reg_other = reg_other.replace(/  +/g, ' ').trim(); //replace multiple spaces with single
+
+		reg_other = ['~', compatiblity_run_as_admin, reg_other]; //order is important, and '~ ' is important for win8+
+		reg_other = reg_other.filter((el) => el !== ''); //if old reg_other is empty, remove it
+		reg_other = reg_other.join(' ');
+
+		var new_reg = reg.toObject(compatiblity_key, _path, reg_other);
+		write(new_reg, (_err) => {
+			if (_err) log('Could not add "Run as Admin" option to registry for "' + _path + '".\r\n' + _err.stack);
+			if (callback) callback(_err);
+		});
+	});
+}
+
+function addAdminWinXPSP3(_path, callback = null) //we force "run as admin" and "win xp sp3" mode, but keep all other user settings
+{
+	let overwrite = false;
+	let _options = ['~', compatiblity_run_as_admin, compatiblity_xp].join(' ');
+	let _reg = reg.toObject(compatiblity_key, _path, _options);
+	checkKeyValAdd(compatiblity_key, _path, _reg, overwrite, (err, diff, result, __reg) => {
+		if (err)
+		{
+			log('Could not add "Run as Admin" and Windows XP SP3 options for "' + _path + '".');
+			return callback ? callback(err) : undefined;
+		}
+		if (!diff) return callback ? callback(null) : undefined;
+
+		let reg_other = result[compatiblity_key].values[_path].value; //save old values
+		reg_other = reg_other.replace('~ ', '').trim();
+		reg_other = reg_other.replace(compatiblity_run_as_admin, '').trim();
+		reg_other = reg_other.replace(/  +/g, ' ').trim(); //replace multiple spaces with single
+		reg_other = reg_other.split(' ');
+		reg_other = reg_other.filter((el) => !(compatiblity_modes.indexOf(el) > -1)); //remove compatibility modes, so we can add XP SP3 compatibility
+		reg_other = reg_other.filter((el) => el !== '');
+		reg_other = reg_other.join(' ').trim();
+
+		reg_other = ['~', compatiblity_run_as_admin, reg_other, compatiblity_xp]; //order is important, and '~ ' is important for win8+
+		reg_other = reg_other.filter((el) => el !== ''); //if old reg_other is empty, remove it
+		reg_other = reg_other.join(' ');
+
+		var new_reg = reg.toObject(compatiblity_key, _path, reg_other);
+		write(new_reg, (_err) => {
+			if (_err) log('Could not add "Run as Admin" and Windows XP SP3 options for "' + _path + '" to registry.\r\n' + _err.stack);
+			if (callback) callback(_err);
+		});
 	});
 }

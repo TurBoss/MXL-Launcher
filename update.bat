@@ -97,7 +97,7 @@ echo Builder modules:
 for /f "tokens=*" %%A in (builder_modules.txt) do echo   %%A
 echo.
 
-echo Installing Launcher modules.
+echo Installing Launcher modules:
 cd "dev\resources\app"
 for /F "tokens=*" %%A in (..\..\..\launcher_modules.txt) do (
 	echo Installing %%A.
@@ -106,7 +106,7 @@ for /F "tokens=*" %%A in (..\..\..\launcher_modules.txt) do (
 cd "..\..\.."
 timeout 1 > nul
 echo.
-echo Installing Builder modules.
+echo Installing Builder modules:
 for /F "tokens=*" %%A in (builder_modules.txt) do (
 	echo Installing %%A.
 	call npm install %%A --save-dev

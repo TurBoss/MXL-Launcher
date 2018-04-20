@@ -24,8 +24,20 @@ global.display = ((name, enable = true) => {
 
 /*OTHER BUTTON */
 ipcMain.on('close', (event) => {
-	win.hide();
-	win.close();
+	if (status.game_count.active || status.game_count.loading)
+	{
+		let _options = {type: 'question', buttons: ['Yes', 'No'], defaultId: 1, title: 'Quit', message: 'Are you sure you want to close the game and quit?', cancelId: 1, noLink: true };
+		dialog.showMessageBox(win, _options, (btn_id) => {
+			if (btn_id === 1) return;
+			win.hide();
+			win.close();
+		});
+	}
+	else
+	{
+		win.hide();
+		win.close();
+	}
 });
 
 ipcMain.on('min', (event) => win.minimize());
@@ -127,9 +139,18 @@ ipcMain.on('update_game', (event) => {
 	});
 });
 
-ipcMain.on('restart_update', (event) => {
+ipcMain.on('restart_update', (event) => { //closes launcher, updates and shows progress, then starts the launcher if the script does so
 	clogn('manual restart update: ' + paths.file.update);
-	restartLauncherAndRun(paths.file.update, inno_silent_levels.silent, exit_codes.update); //closes launcher, updates and shows progress, then starts the launcher if the script does so
+
+	if (status.game_count.active || status.game_count.loading)
+	{
+		let _options = {type: 'question', buttons: ['Yes', 'No'], defaultId: 1, title: 'Update', message: 'Are you sure you want to close the game and update the Launcher?', cancelId: 1, noLink: true };
+		dialog.showMessageBox(win, _options, (btn_id) => {
+			if (btn_id === 1) return;
+			restartLauncherAndRun(paths.file.update, inno_silent_levels.silent, exit_codes.update);
+		});
+	}
+	else restartLauncherAndRun(paths.file.update, inno_silent_levels.silent, exit_codes.update);
 });
 
 ipcMain.on('restart', (event) => { //restarts launcher

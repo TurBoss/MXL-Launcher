@@ -183,24 +183,6 @@ global.d2_reg_keys =
 ];
 global.d2_reg_val_path = 'InstallPath';
 
-global.compatiblity_key = 'HKCU\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers';
-//global.compatiblity_all_key = 'HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers'; //all users, requires admin probably
-global.compatiblity_run_as_admin = 'RUNASADMIN'; //Run program as an administrator
-//global.compatiblity_disable_themes = 'DISABLETHEMES'; //Disable Visual Themes
-//global.compatiblity_disable_composition = 'DISABLEDWM'; //Disable Desktop Composition
-global.compatiblity_xp = 'WINXPSP3';
-global.compatiblity_modes = [
-	'WIN95',
-	'WIN98',
-	'WINXPSP2',
-	'WINXPSP3',
-	'VISTARTM',
-	'VISTASP1',
-	'VISTASP2',
-	'WIN7RTM',
-	'WIN8RTM'
-];
-
 global.d2vidtst_key = 'HKCU\\Software\\Blizzard Entertainment\\Diablo II\\VideoConfig'; //check wow and HKLM and HKLM wow
 global.d2vidtst_val =
 {
