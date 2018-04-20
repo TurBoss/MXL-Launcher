@@ -11,10 +11,12 @@ if (typeof path === 'undefined') global.path = require('path'); //for resolving/
 module.exports = {
 	read,
 	write,
+	remove,
 	existsKey,
 	existsKeyVal,
 	checkResultKeyVal,
 	checkKeyValAdd,
+	checkKeyValDelete,
 
 	runAsOptions,
 	addAdmin,
@@ -342,6 +344,61 @@ function checkKeyValAdd(key, val, reg, overwrite, callback)
 			callback(null, diff);
 		});
 	});
+}
+
+//delete one registry key or value
+//todo: add support for multiple paralell deletions
+function remove(key, value = null, callback)
+{
+	function _deleteReg(_key, _val = null, _callback)
+	{
+		if (isNull(_key) || _key === '')
+		{
+			err = new Error('Empty registry key name.');
+			log(err);
+			return _callback(err);
+		}
+
+		function _wrapQuotes(string)
+		{
+			return '"' + string + '"';
+		}
+
+		var execFile = require('child_process').execFile;
+		let args = ['delete', _wrapQuotes(_key)];
+		if (!isNull(_val))
+			args.push('/v', _wrapQuotes(_val));
+		args.push('/f');
+		execFile('reg', args, {cwd: path.dirname(module.parent.filename), windowsVerbatimArguments: true}, (err, stdout, stderr) => {
+			if (err) log(err); //return _callback(err, false);
+			_callback(err);
+		});
+	}
+
+	_deleteReg(key, value, callback);
+}
+
+//check if key and/or value exists, and deletes it if so
+function checkKeyValDelete(key, val = null, callback)
+{
+	if (!isNull(val))
+	{
+		existsKeyVal(key, val, (err, exists_key, exists_val, result) => {
+			if (err) log(err);
+			if (!exists_key || !exists_val) return callback(null);
+
+			remove(key, val, callback);
+		});
+	}
+	else
+	{
+		existsKey(key, (err, exists_key, result) => {
+			if (err) log(err);
+			if (!exists_key) return callback(null);
+
+			remove(key, null, callback);
+		});
+	}
 }
 
 //adds "run as" options, deletes all other options. eg. run as admin + run in win xp sp3 compatibility mode, delete old options

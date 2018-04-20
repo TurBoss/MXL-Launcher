@@ -178,8 +178,8 @@ global.d2_reg_keys =
 [
 	'HKCU\\Software\\Blizzard Entertainment\\Diablo II',
 	'HKLM\\Software\\Blizzard Entertainment\\Diablo II', //HKLM is read-only for non-admins
+	'HKCU\\SOFTWARE\\Wow6432Node\\Blizzard Entertainment\\Diablo II',
 	'HKLM\\SOFTWARE\\Wow6432Node\\Blizzard Entertainment\\Diablo II', //HKLM is read-only for non-admins
-	'HKCU\\SOFTWARE\\Wow6432Node\\Blizzard Entertainment\\Diablo II'
 ];
 global.d2_reg_val_path = 'InstallPath';
 
@@ -511,6 +511,7 @@ global.tsw_battlenet_reg = {
 		}
 	}
 }; //Battle.net gateways
+global.remove_gateway_val = 'Battle.net gateways';
 
 /***** FILE SIZES & SHA512 HASHES *****/
 global.game = { //order of versions is important, put newer versions at the end

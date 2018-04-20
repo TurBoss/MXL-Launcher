@@ -982,6 +982,10 @@ function addTSWReg(callback)
 		[
 			(_callback) => reg.write(tsw_D2_reg, _callback),
 			(_callback) => reg.write(tsw_battlenet_reg, _callback),
+
+			//remove key, sometimes causes problems on clicking multiplayer button. it's Starcraft gws (?)
+			//todo: use reg.rename to back it up instead of deleting. that requires writing a reg.rewrite function (done by reading a reg, writing it with another name, and deleting the original)
+			(_callback) => reg.checkKeyValDelete(tsw_battlenet_key, remove_gateway_val, _callback),
 		],
 		(err) => {
 			if (err) log('Error while adding TSW registry entries.\r\n' + err.stack);
