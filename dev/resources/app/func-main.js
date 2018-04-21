@@ -367,13 +367,13 @@ function fetchLauncherUpdates(callback = null)
 		downloaded: false //null = dl not started yet, false = currently dl-ing, true = dl finished
 	};
 	let part_destination_path = destination_path + ext.part;
-	if (pathExists(part_destination_path)) delFile(part_destination_path);
+	delFile(part_destination_path);
 	downloadFile(url.launcher_update, part_destination_path, null, 0, (err) => {
 		clogn(err);
 		if (err)
 		{
 			clogn('fetchLauncherUpdates() error downloading update ' + part_destination_path);
-			if (pathExists(part_destination_path)) delFile(part_destination_path);
+			delFile(part_destination_path);
 			paths.file.update = '';
 			status.update = {
 				isNeeded: false,
@@ -421,10 +421,10 @@ function downloadPatch(full, callback)
 		{
 			if (isFull)
 			{
-				if (pathExists(patch_d2_mpq_path)) delFile(patch_d2_mpq_path);
+				delFile(patch_d2_mpq_path);
 				unzipFile(destination_path, settings.d2_path, (err, stdout, stderr) => { //check output, is it text or exit code
 					if (err) { clogn(err); clogn(stderr); }
-					if (!err && pathExists(destination_path)) delFile(destination_path);
+					else delFile(destination_path);
 					__callback(err);
 				});
 			}
@@ -434,11 +434,11 @@ function downloadPatch(full, callback)
 					if (err) { clogn(err); clogn(stderr); }
 					if (!err)
 					{
-						if (pathExists(destination_path)) delFile(destination_path);
-						if (pathExists(patch_d2_mpq_path)) delFile(patch_d2_mpq_path);
+						delFile(destination_path);
+						delFile(patch_d2_mpq_path);
 						renameFile(patch_d2_mpq_temp_path, patch_d2_mpq_path);
 					}
-					if (pathExists(patch_d2_mpq_temp_path)) delFile(patch_d2_mpq_temp_path);
+					delFile(patch_d2_mpq_temp_path);
 					__callback(err);
 				});
 			}
@@ -449,16 +449,16 @@ function downloadPatch(full, callback)
 		let part_destination_path = destination_path + ext.part;
 		let patch_d2_mpq_temp_path = patch_d2_mpq_path + ext.temp;
 		let err = null;
-		if (pathExists(part_destination_path)) delFile(part_destination_path);
-		if (pathExists(patch_d2_mpq_temp_path)) delFile(patch_d2_mpq_temp_path);
+		delFile(part_destination_path);
+		delFile(patch_d2_mpq_temp_path);
 		if (pathExists(destination_path)) return _apply(destination_path, patch_d2_mpq_path, patch_d2_mpq_temp_path, isFull, _callback);
 		downloadFile(_url, part_destination_path, 'index_DL_Progress', dl_progress_draw_frequency, (err) => {
 			if (err)
 			{
-				if (pathExists(part_destination_path)) delFile(part_destination_path);
+				delFile(part_destination_path);
 				return _callback(err);
 			}
-			if (pathExists(destination_path)) delFile(destination_path); //better to rename it to "old", then if part rename is ok, delete it
+			delFile(destination_path); //better to rename it to "old", then if part rename is ok, delete it
 			renameFile(part_destination_path, destination_path);
 			_apply(destination_path, patch_d2_mpq_path, patch_d2_mpq_temp_path, isFull, _callback);
 		});
@@ -1172,21 +1172,21 @@ function getDlls(_version, callback)
 	let destination_path = settings.d2_path + '\\' + file_name;
 	let part_destination_path = destination_path + ext.part;
 	let err = null;
-	if (pathExists(part_destination_path)) delFile(part_destination_path);
-	if (pathExists(destination_path)) delFile(part_destination_path);
+	delFile(part_destination_path);
+	delFile(part_destination_path);
 
 	downloadFile(url.dll_updates, part_destination_path, 'index_DL_Progress', dl_progress_draw_frequency, (err) => {
 		if (err)
 		{
-			if (pathExists(part_destination_path)) delFile(part_destination_path);
+			delFile(part_destination_path);
 			return callback(err);
 		}
 
 		renameFile(part_destination_path, destination_path);
-		if (pathExists(part_destination_path)) delFile(part_destination_path);
+		delFile(part_destination_path);
 		unzipFile(destination_path, settings.d2_path, (err, stdout, stderr) => { //check output, is it text or exit code
 			if (err) { clogn(err); clogn(stderr); }
-			if (!err && pathExists(destination_path)) delFile(destination_path);
+			else delFile(destination_path);
 			callback(err);
 		});
 	});

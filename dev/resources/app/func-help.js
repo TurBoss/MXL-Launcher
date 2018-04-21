@@ -140,7 +140,7 @@ function idialog(ititle, imsg) //information dialog with an OK button. blocks th
 function pathExists(_path)
 {
 	let exists = false;
-	try	{ exists = fs.statSync(_path) }
+	try	{ exists = fs.existsSync(_path) }
 	catch (e) { if (e.code !== 'ENOENT') throw e }
 	return exists;
 }
@@ -186,7 +186,18 @@ function copyFile(source, destination)
 }
 function delFile(_path)
 {
-	fs.unlinkSync(_path);
+	try
+	{
+		fs.unlinkSync(_path);
+	}
+	catch (err)
+	{
+		if (err.code !== 'ENOENT')
+		{
+			log(err);
+			throw err;
+		}
+	}
 }
 function getFolderContents(_path)
 {
