@@ -1172,7 +1172,7 @@ function getDlls(_version, callback)
 	let destination_path = settings.d2_path + '\\' + file_name;
 	let part_destination_path = destination_path + ext.part;
 	let err = null;
-	delFile(part_destination_path);
+	delFile(destination_path);
 	delFile(part_destination_path);
 
 	downloadFile(url.dll_updates, part_destination_path, 'index_DL_Progress', dl_progress_draw_frequency, (err) => {
