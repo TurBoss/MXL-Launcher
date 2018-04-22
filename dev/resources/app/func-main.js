@@ -368,9 +368,9 @@ function fetchLauncherUpdates(callback = null)
 	};
 	let part_destination_path = destination_path + ext.part;
 	delFile(part_destination_path);
-	downloadFile(url.launcher_update, part_destination_path, null, 0, (err) => {
-		clogn(err);
-		if (err)
+	downloadFile(url.launcher_update, part_destination_path, null, 0, (_err) => {
+		clogn(_err);
+		if (_err)
 		{
 			clogn('fetchLauncherUpdates() error downloading update ' + part_destination_path);
 			delFile(part_destination_path);
@@ -380,7 +380,7 @@ function fetchLauncherUpdates(callback = null)
 				force: false,
 				downloaded: null
 			};
-			if (callback) callback(err, false);
+			if (callback) callback(_err, false);
 			return;
 		}
 		renameFile(part_destination_path, destination_path);
@@ -391,7 +391,7 @@ function fetchLauncherUpdates(callback = null)
 			force: _update.force,
 			downloaded: true
 		};
-		if (callback) callback(err, destination_path);
+		if (callback) callback(_err, destination_path);
 	});
 }
 
@@ -507,7 +507,7 @@ function waitForChecksDisplayButtons()
 	display('loading', true);
 	
 	async.during(
-		(_callback) => _callback(null, isNull(status.checks.offline) || isNull(status.checks.patch_d2) || status.checks.dll !== true),
+		(_callback) => _callback(null, isNull(status.checks.offline) || isNull(status.checks.patch_d2) || isNull(status.checks.dll)),
 		(_callback) => setTimeout(_callback, checks_frequency),
 		(err) => {
 			display('settings');
@@ -523,9 +523,14 @@ function waitForChecksDisplayButtons()
 
 				case 'play':
 				case true:
-					display_button = 'play';
-					display_median_version = version.median.latest_name; //latest version, continue normally to play
-					display_median_version_latest = true; 
+					if (status.checks.dll === true)
+					{
+						display_button = 'play';
+						display_median_version = version.median.latest_name; //latest version, continue normally to play
+						display_median_version_latest = true;
+					}
+					else
+						display_button = 'install'; //unknown version, install
 				break;
 
 				case 'offline':
@@ -568,8 +573,8 @@ function waitForChecksDisplayButtons()
 function waitForModFilesCheckup()
 {
 	async.during(
-		(_callback) => _callback(null, isNull(status.online) || (isNull(status.checks.hash) && isNull(status.checks.size)) || isNull(status.checks.dll)),
-		(_callback) => setTimeout(_callback, checks_frequency),
+		(callback) => callback(null, isNull(status.online) || (isNull(status.checks.hash) && isNull(status.checks.size))),
+		(callback) => setTimeout(callback, checks_frequency),
 		(err) => {
 			if (!status.online)
 			{
@@ -584,9 +589,11 @@ function waitForModFilesCheckup()
 				return;
 			}
 
-			//compare patchD2hash/size to online:
-			checkPatchD2(status.checks.size ? status.checks.size : status.checks.hash, status.checks.size ? 'size' : 'hash'); // --> status.checks.patch_d2
-			if (status.checks.dll !== true) getDlls(version.median.latest, (err_dll) => { status.checks.dll = true; });
+			//compare patchD2hash/size to online, and check if dll hash is correct:
+			async.parallel([ //do these in parallel
+				(_callback) => checkPatchD2(status.checks.size ? status.checks.size : status.checks.hash, status.checks.size ? 'size' : 'hash', _callback), // --> status.checks.patch_d2
+				(_callback) => checkDlls(_callback), //--> status.checks.dll
+			], (_err) => {});
 		}
 	);
 }
@@ -603,7 +610,6 @@ function offlineChecks()
 			(waterfall_continue) => { async.parallel([ //do these in parallel
 				//getPatchD2Size, //--> status.checks.size
 				getPatchD2Hash, //--> status.checks.hash
-				checkDlls, //--> status.checks.dll
 				checkVidTest,
 				checkGlide,
 				checkD2Compatibility,
@@ -674,8 +680,8 @@ function checkD2Path(callback)
 		{
 			if (d2path.substr(d2path.length - 1) === '\\')
 				d2path = d2path.substr(0, d2path.length - 1);
-			_checkD2files(d2path, (err) => {
-				if (err) log(err);
+			_checkD2files(d2path, (_err) => {
+				if (_err) log(_err);
 				else
 				{
 					_savePathSettings(d2path);
@@ -690,8 +696,8 @@ function checkD2Path(callback)
 		if (_pathValid(_path) && _pathValid(_path[0]))
 		{
 			_path = _path[0];
-			_checkD2files(_path, (err) => {
-				if (err) log(err); //edialog(err);
+			_checkD2files(_path, (_err) => {
+				if (_err) log(_err); //edialog(err);
 				else
 				{
 					_savePathSettings(_path);
@@ -864,9 +870,9 @@ function checkGlide(callback)
 	reg.existsKey(glide_key, (err, exists) => {
 		if (err) log(err);
 		let _reg = (!err && exists) ? glide_language_reg : glide_reg; //make sure it's in english if it's already installed, otherwise add whole _reg
-		reg.write(_reg, (err) => {
-			if (err) log('Unable to add Glide registry entries.\r\n' + err.stack);
-			callback(err);
+		reg.write(_reg, (_err) => {
+			if (_err) log('Unable to add Glide registry entries.\r\n' + _err.stack);
+			callback(_err);
 		});
 	});
 }
@@ -904,9 +910,9 @@ function saveSettingsVideoReg(mode, callback = null)
 		}
 	};
 
-	reg.write(renderer_reg, (_err) => {
-		if (_err) log('saveSettingsVideoReg \r\n' + _err.stack);
-		if (callback) callback(_err);
+	reg.write(renderer_reg, (err) => {
+		if (err) log('saveSettingsVideoReg \r\n' + err.stack);
+		if (callback) callback(err);
 	});
 }
 
@@ -1083,16 +1089,16 @@ function checkPatchD2(data, type, callback = null)
 		version.median.current = version.median.latest;
 		version.median.current_name = version.median.latest_name;
 		status.checks.patch_d2 = 'play';
-		return callback ? callback(null) : null;
+		return callback ? callback(null) : undefined;
 	}
-	let err2 = new Error('patch_d2.mpq does not match the latest version.');
+	let err = new Error('patch_d2.mpq does not match the latest version.');
 	if (data == clod_data) //if it's clod, do a full download/install, not an update
 	{
 		_saveVersionNameSettings(clod_version_name); //if data matches, update the version string in the settings
 		version.median.current = clod_version;
 		version.median.current_name = clod_version_name;
 		status.checks.patch_d2 = 'clod'; //full install
-		return callback ? callback(err2) : null;
+		return callback ? callback(err) : undefined;
 	}
 	for (let version_key in version.data.patch_d2.versions)
 	{
@@ -1108,7 +1114,7 @@ function checkPatchD2(data, type, callback = null)
 			version.median.current = _version;
 			version.median.current_name = _version_name;
 			status.checks.patch_d2 = 'update';
-			return callback ? callback(err2) : null;
+			return callback ? callback(err) : undefined;
 		}
 		else continue; //we didn't find a match, continue
 	}
@@ -1125,14 +1131,11 @@ function checkDlls(callback)
 {
 	clogn('checkDlls()');
 
-	if (version.median.current && (parseInt(version.median.current.split('.')[0]) < 17) && !status.online)
+	if (version.median.current && (parseInt(version.median.current.split('.')[0]) < 17) && !status.online) //there were no dlls in pre Median 2017 versions
 	{
 		status.checks.dll = true;
 		return callback(null);
 	}
-
-	/*const Fog_dll_m2017_sha1 = '206880233ee88a25d8824f58621e3fecb5a94b0d';
-	const Fog_dll_v113c_sha1 = 'fc9e40e6b81e8c65703afdaaae010aace85d0969';*/
 
 	var mxl_dll_path = settings.d2_path + '\\' + filename.mxl_dll;
 	var fog_dll_path = settings.d2_path + '\\' + filename.fog_dll;
@@ -1184,10 +1187,10 @@ function getDlls(_version, callback)
 
 		renameFile(part_destination_path, destination_path);
 		delFile(part_destination_path);
-		unzipFile(destination_path, settings.d2_path, (err, stdout, stderr) => { //check output, is it text or exit code
-			if (err) { clogn(err); clogn(stderr); }
+		unzipFile(destination_path, settings.d2_path, (_err, stdout, stderr) => { //check output, is it text or exit code
+			if (_err) { clogn(_err); clogn(stderr); }
 			else delFile(destination_path);
-			callback(err);
+			callback(_err);
 		});
 	});
 }

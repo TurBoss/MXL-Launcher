@@ -26,7 +26,7 @@ global.display = ((name, enable = true) => {
 ipcMain.on('close', (event) => {
 	if (status.game_count.active || status.game_count.loading)
 	{
-		let _options = {type: 'question', buttons: ['Yes', 'No'], defaultId: 1, title: 'Quit', message: 'Are you sure you want to close the game and quit?', cancelId: 1, noLink: true };
+		let _options = {type: 'question', buttons: ['Yes', 'No'], defaultId: 1, title: 'Quit', message: 'Are you sure you want to close the game and quit?', cancelId: 1};
 		dialog.showMessageBox(win, _options, (btn_id) => {
 			if (btn_id === 1) return;
 			win.hide();
@@ -116,10 +116,24 @@ ipcMain.on('run_game', (event) => {
 ipcMain.on('install_game', (event) => {
 	clogn('install_game');
 	//saveD2FilesForUninstallRollback(); //we back up files so we can restore them after uninstall
+	let dll_status = status.checks.dll;
+	let patch_d2_status = status.checks.patch_d2;
+
+	//we reset the checks status and run new checks
 	status.checks = copyObject(defaults.status.checks);
 	waitForChecksDisplayButtons();
 	waitForModFilesCheckup();
-	downloadPatch(true, (err) => {
+
+	async.parallel([ //do these in parallel
+		(_callback) => {
+			if (!(patch_d2_status === 'play' || patch_d2_status === true)) downloadPatch(true, _callback);
+			else _callback(null);
+		},
+		(_callback) => {
+			if (dll_status !== true) getDlls(version.median.latest, _callback);
+			else _callback(null);
+		},
+	], (err) => {
 		if (err) clogn('install_game err = ' + err);
 		if (err) return display('restart');
 		offlineChecks();
@@ -129,10 +143,16 @@ ipcMain.on('install_game', (event) => {
 ipcMain.on('update_game', (event) => {
 	clogn('update_game');
 	//saveD2FilesForUninstallRollback(); //we back up files so we can restore them after uninstall
+
+	//we reset the checks status and run new checks
 	status.checks = copyObject(defaults.status.checks);
 	waitForChecksDisplayButtons();
 	waitForModFilesCheckup();
-	downloadPatch(false, (err) => {
+
+	async.parallel([ //do these in parallel
+		(_callback) => downloadPatch(false, _callback),
+		(_callback) => getDlls(version.median.latest, _callback), //--> status.checks.dll
+	], (err) => {
 		if (err) clogn('update_game err = ' + err);
 		if (err) return display('restart');
 		offlineChecks();

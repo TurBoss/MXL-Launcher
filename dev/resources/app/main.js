@@ -126,7 +126,7 @@ app.on('window-all-closed', () => app.quit()); //http://electron.atom.io/docs/ap
 
 /*app.on('quit', () => { });*/
 
-app.on('ready', () => { 
+app.on('ready', () => {
 	clogn('app ready');
 
 	//most important part of the program
@@ -176,7 +176,6 @@ app.on('ready', () => {
 					checkD2Path,
 					getPatchD2Size, sets --> status.checks.size
 					getPatchD2Hash, sets --> status.checks.hash
-					checkDlls, sets --> status.checks.dll
 					checkVidTest,
 					checkGlide,
 					checkD2Compatibility,
@@ -186,7 +185,7 @@ app.on('ready', () => {
 				}*/
 
 				//compare hashes/sizes to the online version info
-				waitForModFilesCheckup(); //waits for status.online, status.checks.size or status.checks.hash, status.checks.dll; sets --> status.checks.patch_d2
+				waitForModFilesCheckup(); //waits for status.online, status.checks.size or status.checks.hash; sets --> status.checks.patch_d2, status.checks.dll
 
 				//display window, buttons and version
 				async.during(
@@ -194,7 +193,7 @@ app.on('ready', () => {
 					(_callback) => setTimeout(_callback, checks_frequency),
 					(err) => {
 						//win.webContents.send('index_medianVersion', settings.median_version); //send settings mod version to index.html (displayed under the play button)
-						waitForChecksDisplayButtons(); //waits for status.checks.patch_d2
+						waitForChecksDisplayButtons(); //waits for status.checks.patch_d2 and status.checks.dll
 						_displayWindow();
 					}
 				);
