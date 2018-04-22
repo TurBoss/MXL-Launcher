@@ -121,8 +121,7 @@ function read(reg_keys, subkey = null, value = null, callback)
 		let args = ['query', _wrapQuotes(reg_key)];
 		if (!isNull(value)) 
 			args.push('/v', _wrapQuotes(value));
-		var execFile = require('child_process').execFile;
-		execFile('reg', args, {cwd: path.dirname(module.parent.filename), windowsVerbatimArguments: true}, (err, stdout, stderr) => {
+		require('child_process').exec(['reg'].concat(args).join(' '), (err, stdout, stderr) => {
 			if (err) return _callback(err, null);
 			var out = stdout.split('\r\n');
 			out = out.filter((reg_entry) => reg_entry.trim()); //remove empty lines
@@ -271,7 +270,7 @@ function write(reg_data, callback)
 		{
 			return ((string.length === 1) ? ('0' + string) : string);
 		}
-		var execFile = require('child_process').execFile;
+
 		let args = ['add', _wrapQuotes(key)];
 		if (isNull(type)) type = 'REG_SZ';
 		if (type === 'REG_BINARY' && isArray(data))
@@ -286,7 +285,7 @@ function write(reg_data, callback)
 		if (!isNull(val))
 			args.push('/v', _wrapQuotes(val), '/t', type, '/d', _wrapQuotes(data));
 		args.push('/f');
-		execFile('reg', args, {cwd: path.dirname(module.parent.filename), windowsVerbatimArguments: true}, (err, stdout, stderr) => {
+		require('child_process').exec(['reg'].concat(args).join(' '), (err, stdout, stderr) => {
 			if (err) log(err); //return _callback(err, false);
 			_callback(err);
 		});
@@ -364,12 +363,11 @@ function remove(key, value = null, callback)
 			return '"' + string + '"';
 		}
 
-		var execFile = require('child_process').execFile;
 		let args = ['delete', _wrapQuotes(_key)];
 		if (!isNull(_val))
 			args.push('/v', _wrapQuotes(_val));
 		args.push('/f');
-		execFile('reg', args, {cwd: path.dirname(module.parent.filename), windowsVerbatimArguments: true}, (err, stdout, stderr) => {
+		require('child_process').exec(['reg'].concat(args).join(' '), (err, stdout, stderr) => {
 			if (err) log(err); //return _callback(err, false);
 			_callback(err);
 		});

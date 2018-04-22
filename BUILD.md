@@ -6,7 +6,7 @@ ____
 The three main scripts are:
 * Create/update the Builder and Launcher modules, and the dev test version of the Launcher with [update.bat](update.bat).
 * To publish, build the Launcher files/setup/update with [make.bat](make.bat). They are built to the [dist](dist) folder.
-* Developer version of the Launcher is in [dev](dev). Run it with [test.bat](test.bat).
+* Developer version of the Launcher is in [dev](dev) (accepts the */test=true* for online custom versions testing). Run it with [test.bat](test.bat).
 
 Source files are split between the Launcher and Builder:
 * Launcher source code is in [dev\resources\app](dev\resources\app).
@@ -16,7 +16,7 @@ Source files are split between the Launcher and Builder:
 
 #### Files in detail
 Located in the [root](https://github.com/Median-XL/) of the repository:
-* [test.bat](test.bat) - quick testing of source code changes. I suggest you change `devTools.enableConsoleLog` option in [dev\resources\app\main.js](dev\resources\app\main.js) from `false` to `true` to see the command line debug output.
+* [test.bat](test.bat) - quick testing of source code changes, also uses the online test environment that uses a cusom versions list file. I suggest you change `devTools.enableConsoleLog` option in [dev\resources\app\main.js](dev\resources\app\main.js) from `false` to `true` to see the command line debug output.
 * [make.bat](make.bat) - builds the Launcher files/setup/update. Checks version number missmatches in all **package.json**s. Asks if update should contain just the app folder or all binaries.  
 * [update.bat](update.bat) - updates the Launcher modules, Builder modules, and dev test version of the Launcher binaries and modules.
 * [make_setup.bat](make_setup.bat) - makes the Setup and Updates for the Launcher in [dist](dist). Used by [make.bat](make.bat).

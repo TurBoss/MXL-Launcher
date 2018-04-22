@@ -16,6 +16,7 @@ const fs = require('fs-extra'); //for copying/handling files, we use this instea
 var export_func =
 [
 	sprintf,
+	dq,
 	isObjectEmpty,
 	copyObject,
 	getCurrentTimeTag,
@@ -59,6 +60,10 @@ export_func.forEach((func) => global[func.name] = func);
 function sprintf(str, ...argv) //https://stackoverflow.com/a/43718864/2331033
 {
 	return !argv.length ? str : sprintf(str = str.replace(sprintf.token || '%s', argv.shift()), ...argv);
+}
+function dq(str) //add doublequotes
+{
+	return str ? '"' + str.toString() + '"' : '';
 }
 function isObjectEmpty(obj)
 {
@@ -215,8 +220,7 @@ function createFolder(_path)
 
 //checks if the app is running with administrator privileges
 function isRunningAsAdmin(callback) {
-	var exec = require('child_process').exec;
-	exec('NET SESSION', (err, so, se) => {
+	require('child_process').exec('NET SESSION', (err, so, se) => {
 		let admin = (se.length === 0);
 		callback(err, admin);
 	});
@@ -228,8 +232,7 @@ function isRunningAsAdmin(callback) {
 //cwd_path - the folder where the program will work in. for example, if you run d2 in another folder, error log appears in the other folder instead of the d2 folder
 function runProgram(_path, args=[], cwd_path = null, callback = null)
 {
-	var execFile = require('child_process').execFile;
-	return execFile(_path, args, {cwd: cwd_path}, (err, stdout, stderr) => { if (callback) return callback(err, stdout, stderr) }); //function called on exit //, stdio: 'inherit'
+	return require('child_process').exec([dq(_path)].concat(args).join(' '), {cwd: cwd_path}, (err, stdout, stderr) => { if (callback) return callback(err, stdout, stderr) }); //function called on exit //, stdio: 'inherit'
 }
 
 //unzip an archive
@@ -241,8 +244,7 @@ function unzipFile(_path, zcwd, callback)
 {
 	if (!pathExists(paths.file.unzip_7z)) return callback(new Error('Cannot unzip. 7za.exe is missing from: ' + paths.file.unzip_7z));
 	if (!pathExists(_path)) return callback(new Error('Cannot unzip. File missing: ' + _path));
-	const exec = require('child_process').exec;
-	exec('"' + paths.file.unzip_7z + '" x -aoa "' + _path + '"', { cwd: zcwd }, callback);
+	require('child_process').exec([dq(paths.file.unzip_7z), 'x', '-aoa', dq(_path)].join(' '), { cwd: zcwd }, callback);
 }
 
 //applies a patch to a file. used to update to a new version.
@@ -253,13 +255,11 @@ function unzipFile(_path, zcwd, callback)
 function patch_xdelta(path_original_file, path_xpatch_file, path_new_file = '', zcwd, callback) //xdelta3 -d -s path_original path_patch
 {
 	if ((path_new_file === '') || (isNull(path_new_file) || (isUndefined(path_new_file)))) path_new_file = path_original_file;
-	path_new_file = (path_new_file ? ' "' + path_new_file + '"' : '');
 	if (!pathExists(paths.file.xdelta)) return callback(new Error('Cannot patch. xdelta.exe is missing from: ' + paths.file.xdelta));
 	if (!pathExists(path_original_file)) return callback(new Error('Cannot patch. Target file missing: ' + path_original_file));
 	if (!pathExists(path_xpatch_file)) return callback(new Error('Cannot patch. xpatch file missing: ' + path_xpatch_file));
-	clogn('patch_xdelta: "' + paths.file.xdelta + '" -d -f -s "' + path_original_file + '" "' + path_xpatch_file + '"' + path_new_file);
-	const exec = require('child_process').exec;
-	exec('"' + paths.file.xdelta + '" -d -f -s "' + path_original_file + '" "' + path_xpatch_file + '"' + path_new_file, { cwd: zcwd }, callback);
+	clogn('patch_xdelta: ' + [dq(paths.file.xdelta), '-d', '-f', '-s', dq(path_original_file), dq(path_xpatch_file), dq(path_new_file)].filter(Boolean).join(' '));
+	require('child_process').exec([dq(paths.file.xdelta), '-d', '-f', '-s', dq(path_original_file), dq(path_xpatch_file), dq(path_new_file)].filter(Boolean).join(' '), { cwd: zcwd }, callback);
 }
 
 //downloads files from an url
@@ -343,8 +343,7 @@ function getJSON(url, callback)
 //gets a file sha1 hash. uses the 7za.exe to calculate it
 function getFileHashSHA1(_path, callback)
 {
-	let execFile = require('child_process').execFile;
-	execFile(paths.file.unzip_7z, ['h', '-scrcsha1', '"' + _path + '"'], {cwd: paths.folder.unzip, windowsVerbatimArguments: true}, (err, stdout, stderr) => {
+	require('child_process').exec([dq(paths.file.unzip_7z), 'h', '-scrcsha1', dq(_path)].join(' '), {cwd: paths.folder.unzip, windowsVerbatimArguments: true}, (err, stdout, stderr) => {
 		if (err)
 		{
 			log(err);
