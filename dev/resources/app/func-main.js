@@ -253,7 +253,8 @@ function createSettingsWindow()
 //restarts the launcher if no script_path is specified
 //if script_path is specified, it closes the launcher and starts the script (will not start the launcher afterwards, unless the script starts it)
 //inno_silent_level is for running inno scripts. for example if you want to update something in the background without showing anything to the user, you use 3
-function restartLauncherAndRun(script_path = '', inno_silent_level = 0, exit_code = 0)
+//keep_args = true makes the launcher restart with the current command line arguments (plus any new)
+function restartLauncherAndRun(script_path = '', inno_silent_level = inno_silent_levels.none, exit_code = exit_codes.normal, keep_args = true)
 {
 	let noprompt = '/sp-';
 	let silent = '/silent';
@@ -267,10 +268,16 @@ function restartLauncherAndRun(script_path = '', inno_silent_level = 0, exit_cod
 	];
 
 	let options = {};
-	if (script_path !== '')
+	if (script_path !== '') options.execPath = script_path;
+	if (inno_silent_level !== inno_silent_levels.none)
 	{
-		options.execPath = script_path;
-		if (inno_silent_level !== 0) options.args = inno_silent_level_args[inno_silent_level];
+		options.args = [];
+		if (keep_args)
+		{
+			options.args = process.argv;
+			options.args.shift();
+		}
+		options.args.concat(inno_silent_level_args[inno_silent_level]); //add a .filter ?
 	}
 
 	app.relaunch(options);

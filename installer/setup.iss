@@ -222,5 +222,5 @@ Name: "{app}\Uninstall"; Filename: "{uninstallexe}"
 Root: HKCU; Subkey: "{#RegAppCompatFlags}"; ValueType: string; ValueName: "{app}\{#MyAppExeName}"; ValueData: "~ RUNASADMIN"; Flags: noerror deletevalue uninsdeletevalue
 
 [Run]
-;run the launcher after install only if we have admin privileges
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent; Check: IsAdminLoggedOn
+;run the launcher after install only if we have admin privileges. if the setup was ran with the /test command line parameter, forward it to the Launcher
+Filename: "{app}\{#MyAppExeName}"; Parameters: "/test={param:test|false}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent; Check: IsAdminLoggedOn

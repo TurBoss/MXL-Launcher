@@ -19,7 +19,8 @@ global.devTools = { //for non-dev build, all are false, except the hotkeys obvio
 	index: false, //allows the chrome dev tools to be turned on in index.html
 	settings: false, //allows the chrome dev tools to be turned on in settings.html
 	commandLine: false, //shows the command line arguments for devs in settings.html (-txt -direct)
-	disableUpdates: false, //disables updates
+	disableLauncherUpdates: false,
+	testEnvironment: (process.argv.indexOf('/test=true') > 0), //online environment for testing the launcher (mainly mod install and update, and launcher updates). launcher needs to be started with /test
 };
 
 //***** Internal modules/includes *****
@@ -151,10 +152,11 @@ app.on('ready', () => {
 			);
 
 			getLauncherVersion(); //sets --> version.launcher.current, sync
-			if (_isLocalUpdateReady()) return restartLauncherAndRun(paths.file.update, inno_silent_levels.verysilent, exit_codes.update); //sync; paths.file.update is set by _isLocalUpdateReady
+			if (!devTools.disableLauncherUpdates && _isLocalUpdateReady()) return restartLauncherAndRun(paths.file.update, inno_silent_levels.verysilent, exit_codes.update); //sync; paths.file.update is set by _isLocalUpdateReady
 			getVersionInfo((err) => { //sets --> version; get the latest versions info from online
 				status.online = !err;
 				if (!status.online) return edialog('Median XL - No version information', 'Could not get version information from the internet, using the currently installed one.')
+				if (devTools.disableLauncherUpdates) return;
 				fetchLauncherUpdates((err2, update_path) => {
 					if (update_path)
 					{

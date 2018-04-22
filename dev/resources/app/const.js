@@ -156,7 +156,7 @@ paths.file =
 };
 
 /***** URLS *****/
-global.base_get_url = 'http://get.median-xl.com/launcher/?get=';
+global.base_get_url = 'http://get.median-xl.com/launcher/?' + [(devTools.testEnvironment ? 'test=true' : ''), 'get='].filter(Boolean).join('&');
 global.url =
 {
 	version: base_get_url + 'versions', //we check for version updates and file hashes here
