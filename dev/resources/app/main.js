@@ -221,6 +221,7 @@ app.on('ready', () => {
 	function _isLocalUpdateReady()
 	{
 		//version.launcher.current is set before this
+		let current_ver = version.launcher.current + '.0';
 		let folder_content = getFolderContents(paths.folder.launcher);
 		let latest_update = '';
 		let count = folder_content.length;
@@ -238,13 +239,13 @@ app.on('ready', () => {
 			}
 			if (upd_pre_pos === -1 || upd_suf_pos === -1) continue;
 			let ver = folder_content[i].substring(upd_pre_pos + upd_prefix.length, upd_suf_pos);
-			if (compareVersions(version.launcher.current, ver).isNeeded && compareVersions(latest_update, ver).isNeeded)
+			if (compareVersions(current_ver, ver).isNeeded && compareVersions(latest_update, ver).isNeeded)
 				latest_update = ver;
 			else
 				delFile(paths.folder.launcher + folder_content[i]); //delete lower version updates
 		}
 
-		paths.file.update = latest_update ? paths.folder.launcher + upd_prefix + latest_update + ext.upd : '';
+		paths.file.update = latest_update ? (paths.folder.launcher + upd_prefix + latest_update + ext.upd) : '';
 		return paths.file.update;
 	}
 
