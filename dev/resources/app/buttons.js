@@ -79,12 +79,9 @@ ipcMain.on('run_game', (event) => {
 			(settings.video == 'glide') ? game_cmd_arg.glide : '',
 			(settings.skiptobnet === 'true') ? game_cmd_arg.skiptobnet : '',
 			(settings.nofixaspect === 'true') ? game_cmd_arg.nofixaspect : '',
+			(settings.direct === 'true') ? game_cmd_arg.direct : '',
+			(settings.txt === 'true') ? game_cmd_arg.txt : '',
 		];
-		if (devTools.commandLine)
-		{
-			args.push((settings.direct === 'true') ? game_cmd_arg.direct : '');
-			args.push((settings.txt === 'true') ? game_cmd_arg.txt : '');
-		}
 		args = args.filter((n) => n);
 		var cwd_path = settings.d2_path;
 
@@ -183,7 +180,7 @@ ipcMain.on('settings_clogn', (event, string) => clogn(string));
 
 ipcMain.on('settings_getSettings', (event) => {
 	clogn('- settings_getSettings');
-	settingsWindow.webContents.send('settings_returnGetSettings', settings, devTools.commandLine); //event.sender
+	settingsWindow.webContents.send('settings_returnGetSettings', settings); //event.sender
 });
 
 ipcMain.on('close_settings', (event, _settings) => {

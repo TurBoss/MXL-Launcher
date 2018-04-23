@@ -17,12 +17,11 @@
 
 			var myWindows = BrowserWindow.getAllWindows();
 			var win_settings = myWindows[1]; //0 = index.html
-			var dev = null;
 
 			function f(fname, v = null) { ipcRenderer.send(fname, v); } // Run function from main.js
 			function clogn(string) { f('settings_clogn', string); } // Open link in the external browser
 
-			function outSettings() //requires the global dev var to be filled
+			function outSettings()
 			{
 				let settings = {};
 				//settings.windowed = ((document.getElementById('windowed').checked & !document.getElementById('windowed').disabled)?'true':'false');
@@ -31,8 +30,6 @@
 				settings.skiptobnet = document.getElementById('skiptobnet').checked.toString();
 				settings.video = document.getElementById('video').value;
 				settings.d2_path = document.getElementById('d2_path').value;
-				if (dev) settings.direct = document.getElementById('direct').checked.toString(); //TODO: get devTools.commandLine from main.js and disable/enable this
-				if (dev) settings.txt = document.getElementById('txt').checked.toString(); //TODO: get devTools.commandLine from main.js and disable/enable this
 
 				return settings;
 			}
@@ -72,8 +69,6 @@
 				<input id='windowed' type='checkbox' onchange='clogn("windowed. glideWindowed()"); glideWindowed(this.checked);'><label id='windowedlabel' for='windowed'>Run the game in windowed mode</label>
 				<input id='no_sound' type='checkbox' onchange='noSoundWarning(this.checked);'><label for='no_sound'>Disable in-game sound</label>
 				<input id='skiptobnet' type='checkbox'><label for='skiptobnet'>Skip main menu and connect to multiplayer</label>
-				<input id='direct' type='checkbox' class='developer'><label for='direct' id='directlabel' class='developer'>Direct - load data folder</label>
-				<input id='txt' type='checkbox' class='developer'><label for='txt' id='txtlabel' class='developer'>TXT - compile .txt files</label>
 								
 				<h4>Video Mode</h4>
 				<select name='video' id='video' onchange='clogn("video. switchVideoSettings()"); switchVideoSettings(this.value); f("settings_saveRendererReg", this.value)'>
@@ -115,21 +110,11 @@
 				document.getElementById('windowedlabel').style.opacity = (mode !== 'd3d') ? 1 : 0.5;
 			}
 
-			ipcRenderer.on('settings_returnGetSettings', (event, settings, _dev) => {
+			ipcRenderer.on('settings_returnGetSettings', (event, settings) => {
 				clogn('- loaded settings');
-				if (_dev)
-				{
-					document.getElementById('direct').className = ''; //!_dev ? '' : 'developer';
-					document.getElementById('directlabel').className = '';
-					document.getElementById('txt').className = '';
-					document.getElementById('txtlabel').className = '';
-				}
-				dev = _dev; //global dev variable so we know if we save dev settings
 
 				document.getElementById('windowed').checked = (settings.windowed === 'true');
 				document.getElementById('no_sound').checked = (settings.no_sound === 'true');
-				document.getElementById('direct').checked = (settings.direct === 'true');
-				document.getElementById('txt').checked = (settings.txt === 'true');
 				document.getElementById('skiptobnet').checked = (settings.skiptobnet === 'true');
 				document.getElementById('d2_path').value = settings.d2_path;
 

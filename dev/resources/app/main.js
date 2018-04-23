@@ -18,7 +18,6 @@ global.devTools = { //for non-dev build, all are false, except the hotkeys obvio
 	enableConsoleLog: true, //enables logging to the console (for example, if started from the command line)
 	index: true, //allows the chrome dev tools to be turned on in index.html
 	settings: false, //allows the chrome dev tools to be turned on in settings.html
-	commandLine: false, //shows the command line arguments for devs in settings.html (-txt -direct)
 	disableLauncherUpdates: false,
 	testEnvironment: true, //online environment for testing the launcher (mainly mod install and update, and launcher updates). launcher needs to be started with /test
 };
@@ -53,6 +52,8 @@ global.defaults = {
 		width: 1024,
 		height: 768,
 		maximized: 'false',
+		direct: 'false',
+		txt: 'false',
 	},
 
 	status: { //holds the status of various async and sync checks, along with some data
@@ -93,14 +94,7 @@ global.defaults = {
 		},
 		data: {}, //all the version data: median/launcher version lists, median file hashes, file sizes and version names
 	},
-
 };
-
-if (devTools.commandLine) //for devs
-{
-	defaults.settings.direct = 'false';
-	defaults.settings.txt = 'false';
-}
 
 global.settings = copyObject(defaults.settings); //settings are loaded from settings.json (if it fails, these defaults are used)
 global.status = copyObject(defaults.status);
