@@ -3,6 +3,7 @@
 /********* MODULES ********/
 
 if (typeof dialog === 'undefined') global.dialog = require('electron').dialog; //dialog windows 
+if (typeof path === 'undefined') global.path = require('path'); //for resolving/joining complicated paths, 
 const http = require('http'); //for downloading files
 const fs = require('fs-extra'); //for copying/handling files, we use this instead of the default fs
 
@@ -140,6 +141,11 @@ function edialog(err_or_title, message = null) //error dialog. can take title & 
 function idialog(ititle, imsg) //information dialog with an OK button. blocks the app execution
 {
 	console.log(dialog.showMessageBox(win ? win : null, {title: ititle, message: imsg, buttons: ['OK'], type: 'info'}));
+}
+function choiceDialog(ctitle, cmsg, callback, cbuttons = ['Yes', 'Cancel'], cwin = win)
+{
+	let _options = {type: 'question', buttons: cbuttons, defaultId: cbuttons.length, title: ctitle, message: cmsg, cancelId: cbuttons.length};
+	dialog.showMessageBox(cwin, _options, callback);
 }
 
 function pathExists(_path)

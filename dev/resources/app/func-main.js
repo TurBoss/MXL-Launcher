@@ -766,8 +766,10 @@ function checkGameHash(callback)
 				return _patchGame(null, 'patch'); //rollback game with old storm.dll
 			else if (version_index > game_v113d_index) //if version is 1.14a or higher
 				return _patchGame(null, 'rollback'); //rollback game with new storm.dll
-			else //version is 1.13c
+			else if (version_index == game_v113c_index) //version is 1.13c
 				return _patchGame(null); //do nothing
+			else //unknown version
+				return _patchGame(null, 'rollback'); //rollback with the new storm.dll just in case
 		}
 	});
 
@@ -1151,6 +1153,7 @@ function checkDlls(callback)
 	if (!pathExists(mxl_dll_path) || !pathExists(fog_dll_path) || !pathExists(msvcr110_dll_path))
 	{
 		status.checks.dll = _error.dll.missing;
+
 		//saveD2FilesForUninstallRollback([filename.fog_dll]); //we back up files so we can restore them after uninstall
 		return callback(null);
 	}

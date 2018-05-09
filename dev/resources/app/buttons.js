@@ -26,8 +26,7 @@ global.display = ((name, enable = true) => {
 ipcMain.on('close', (event) => {
 	if (status.game_count.active || status.game_count.loading)
 	{
-		let _options = {type: 'question', buttons: ['Yes', 'No'], defaultId: 1, title: 'Quit', message: 'Are you sure you want to close the game and quit?', cancelId: 1};
-		dialog.showMessageBox(win, _options, (btn_id) => {
+		choiceDialog('Quit', 'Are you sure you want to close the game and quit?', btn_id => {
 			if (btn_id === 1) return;
 			win.hide();
 			win.close();

@@ -82,11 +82,11 @@ global.filename =
 	d2data_mpq: 'd2data.mpq',
 	d2vidtst_exe: 'D2VidTst.exe',
 
-	fog_dll: 'fog.dll',
+	fog_dll: 'Fog.dll',
 	storm_dll: 'Storm.dll',
 	D2gfx_dll: 'D2gfx.dll',
-	mxl_dll: 'MXL.dll',
-	msvcr110_dll: 'msvcr110.dll',
+	mxl_dll: 'MXL.dll', //median 2017 code edits. made to work with plugy 10.00, doesn't work with other versions
+	msvcr110_dll: 'msvcr110.dll', //if the user doesn't have the correct visual studio runtime library installed to run the MXL.dll, this msvcr110.dll is needed, so we ship it just in case
 
 	glide_exe: 'glide-init.exe',
 	glide3x_dll: 'glide3x.dll',
@@ -151,7 +151,8 @@ paths.file =
 	xdelta: paths.folder.external + 'xdelta3.exe', //v3.0.11 //used in patch_xdelta() function
 	update: '', //updater file path. it's set after starting since it's named after a version, gotta get it from the internet
 	d2vidtst: paths.folder.d2_113c + '\\' + filename.d2vidtst_exe,
-	hacked_storm_dll: path.resolve(paths.folder.launcher, paths.folder.installation + '\\' + filename.storm_dll), //allows all 1.14 versions to work when rolled back to 1.13c
+	Fog_dll: path.resolve(paths.folder.launcher, paths.folder.d2_113c + '\\' + filename.fog_dll), //clean 1.13c Fog.dll, not the edited one that median uses
+	hacked_storm_dll: path.resolve(paths.folder.launcher, paths.folder.installation + '\\' + filename.storm_dll), //allows all 1.14 versions to work when rolled back to 1.13c, slightly buggy (?)
 	hacked_D2gfx_dll: path.resolve(paths.folder.launcher, paths.folder.installation + '\\' + filename.D2gfx_dll), //allows multiple 1.13c instances to run at the same time
 };
 
@@ -571,7 +572,7 @@ global.game = { //order of versions is important, put newer versions at the end
 	],
 };
 global.Fog_dll_v113c_sha1 = 'fc9e40e6b81e8c65703afdaaae010aace85d0969';
-global.Fog_dll_m2017_sha1 = '206880233ee88a25d8824f58621e3fecb5a94b0d';
+global.Fog_dll_m2017_sha1 = '206880233ee88a25d8824f58621e3fecb5a94b0d'; //loads MXL.dll
 
 /***** GAME COMMAND LINE ARGUMENTS *****/
 global.game_cmd_arg =

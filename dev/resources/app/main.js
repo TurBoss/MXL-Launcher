@@ -28,8 +28,8 @@ if (devTools.testEnvironment) devTools.testEnvironment = (process.argv.indexOf('
 require('./func-help.js'); //loads basic/helper/misc functions (read/write files, console logging, etc.)
 global.reg = require('./reg.js'); //registry functions, read, write, etc.
 require('./const.js'); //loads constants
-require('./buttons.js'); //loads button event functions, including display()
 require('./func-main.js'); //loads main functions
+require('./buttons.js'); //loads button event functions, including display()
 
 /*************************************/
 /************** STATES ***************/
@@ -39,7 +39,7 @@ global.defaults = {
 
 	settings: { //settings are loaded from settings.json (if it fails, these defaults are used)
 		//*** game settings ***//
-		windowed: 'true', //is game windowed (or full-screen)?
+		windowed: 'false', //is game windowed (or full-screen)?
 		nofixaspect: 'false',
 		video: '', //video mode (ddraw, d3d, glide). if '', it will try to read it from reg
 		no_sound: 'false', //disable sound in the game?
