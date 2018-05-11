@@ -38,7 +38,15 @@ global._error = {
 		version: 'wrong version',
 		missing: 'files missing',
 		hash: 'hash error',
+		not_checked: 'not checked',
 	},
+	d2_path: {
+		empty: 'Path missing.',
+		invalid: 'Invalid path.',
+		game_exe: 'Game.exe missing.',
+		d2data_mpq: 'd2data.mpq missing.',
+		d2exp_mpq: 'd2exp.mpq missing.',
+	}
 };
 
 global.inno_silent_levels = {
@@ -131,6 +139,7 @@ global.paths = {
 //these end with \ :
 paths.folder.app = __dirname + '\\'; //absolute path to inside launcher/resources/app folder (or app.asar in the public distro)
 paths.folder.launcher = path.resolve(paths.folder.app + '..\\..\\') + '\\'; //absolute path of the launcher folder
+paths.folder.launcher_parent = path.resolve(paths.folder.launcher + '..\\') + '\\'; //absolute path to the folder containing the launcher
 paths.folder.external = path.resolve(paths.folder.launcher + 'resources\\external') + '\\'; //absolute path of the launcher/external folder
 //these don't end with \ :
 paths.folder.assets = path.relative(paths.folder.launcher, paths.folder.app + 'assets');

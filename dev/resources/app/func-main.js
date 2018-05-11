@@ -275,7 +275,7 @@ function restartLauncherAndRun(script_path = '', inno_silent_level = inno_silent
 		if (keep_args)
 		{
 			options.args = process.argv;
-			options.args.shift();
+			options.args.shift(); //remove filename
 		}
 		options.args.concat(inno_silent_level_args[inno_silent_level]); //add a .filter ?
 	}
@@ -567,6 +567,7 @@ function waitForChecksDisplayButtons()
 				break;
 			}
 
+			//default case
 			display(display_button);
 			win.webContents.send('index_medianVersion', display_median_version, display_median_version_latest);
 
@@ -639,12 +640,12 @@ function checkD2Path(callback)
 {
 	clogn('checkD2Path()');
 
-	function _savePathSettings(_path)
+	function _savePathSettings(_path, _callback = null)
 	{
 		if (settings.d2_path !== _path)
 		{
 			settings.d2_path = _path;
-			saveSettings();
+			saveSettings(_callback ? _callback(null) : null);
 		}
 		clogn('_savePathSettings()');
 	}
@@ -652,71 +653,137 @@ function checkD2Path(callback)
 	{
 		return (((_path === 'null') || (_path === 'undefined') || (!_path)) ? false : true);
 	}
-	function _checkD2files(d2path, _callback)
+	function _checkD2files(d2path)
 	{
 		clogn('_checkD2files()');
-		//check if d2data.mpq, d2exp.mpq and game.exe are present
-		var d2data_mpq_path = d2path + '\\' + filename.d2data_mpq;
-		var d2exp_mpq_path = d2path + '\\' + filename.d2exp_mpq;
-		var game_exe_path = d2path + '\\' + filename.game_exe;
 
-		var d2data_mpq_exists = pathExists(d2data_mpq_path);
-		var d2exp_mpq_exists = pathExists(d2exp_mpq_path);
-		var game_exe_exists = pathExists(game_exe_path);
+		if (_pathValid(d2path))
+		{
+			//check if d2data.mpq, d2exp.mpq and game.exe are present
+			let d2data_mpq_path = path.resolve(d2path, filename.d2data_mpq);
+			let game_exe_path = path.resolve(d2path, filename.game_exe);
+			let d2exp_mpq_path = path.resolve(d2path, filename.d2exp_mpq);
 
-		if (!d2data_mpq_exists || !game_exe_exists || !d2exp_mpq_exists)
-			return _callback(new Error('Diablo II files are missing from ' + d2path));
-		_callback(null);
+			clogn(d2data_mpq_path + ' :: Exists? ' + pathExists(d2data_mpq_path));
+			clogn(game_exe_path + ' :: Exists? ' + pathExists(game_exe_path));
+			clogn(d2exp_mpq_path + ' :: Exists? ' + pathExists(d2exp_mpq_path));
+
+			if (!pathExists(d2data_mpq_path)) return _error.d2_path.d2data_mpq;
+			if (!pathExists(game_exe_path)) return _error.d2_path.game_exe;
+			if (!pathExists(d2exp_mpq_path)) return _error.d2_path.d2exp_mpq;
+			return true;
+		}
+		else if (d2path === '') return _error.d2_path.empty;
+		else return _error.d2_path.invalid;
 	}
-
-	var success = false;
-	//check if the D2 installation path is specified in the settings
-	if (_pathValid(settings.d2_path))
+	function call_error(err_msg, _callback = callback)
 	{
-		_checkD2files(settings.d2_path, (err) => {
-			if (err) log(err);
-			else success = true;
-		});
+		let _err = err_msg ? new Error(err_msg) : null;
+		if (_err) edialog(_err);
+		if (_callback)
+		{
+			status.checks.patch_d2 = 'restart';
+			status.checks.dll = _error.dll.not_checked;
+			return _callback(_err);
+		}
 	}
-	if (success) return callback(null);
-
-	//read the D2 path from registry
-	reg.read(d2_reg_keys, null, d2_reg_val_path, (err, d2path) => {
-		if (err) log(err);
-		if (isNull(err) && !isNull(d2path) && _pathValid(d2path))
-		{
-			if (d2path.substr(d2path.length - 1) === '\\')
-				d2path = d2path.substr(0, d2path.length - 1);
-			_checkD2files(d2path, (_err) => {
-				if (_err) log(_err);
-				else
-				{
-					_savePathSettings(d2path);
-					success = true;
-				}
-			});
-		}
-		if (success) return callback(null);
-
-		//ask the user to specify the path to D2
+	function select_d2_folder() //ask the user to specify the path to D2
+	{
 		var _path = dialog.showOpenDialog(win ? win : null, { title: 'Select Diablo II folder', properties: ['openDirectory', 'showHiddenFiles'] });
-		if (_pathValid(_path) && _pathValid(_path[0]))
-		{
-			_path = _path[0];
-			_checkD2files(_path, (_err) => {
-				if (_err) log(_err); //edialog(err);
-				else
-				{
-					_savePathSettings(_path);
-					success = true;
-				}
-			});
-		}
-		if (success) return callback(null);
+		if (_pathValid(_path)) return _path[0];
+		return '';
+	}
 
-		//if all fails
-		_savePathSettings('');
-		callback(new Error('Cannot find Diablo II folder.'));
+	reg.read(d2_reg_keys, null, d2_reg_val_path, (err_reg, reg_d2_path) => {
+
+		if (err_reg) log(err_reg);
+
+		let err_msg_lod_missing = 'Diablo II: Lord of Destruction expansion not installed. Please install it.';
+		let err_msg_files_missing = 'Diablo II: Lord of Destruction files missing from:\n';
+		let err_msg_path_empy = 'Diablo II: Lord of Destruction files not found.';
+
+		switch (_checkD2files(settings.d2_path))
+		{
+			case true:
+				return callback(null);
+
+			case _error.d2_path.d2exp_mpq:
+				return call_error(err_msg_lod_missing);
+
+			//select manually
+			case _error.d2_path.game_exe:
+			case _error.d2_path.d2data_mpq:
+				call_error(err_msg_files_missing + settings.d2_path, null);
+				let select_d2_path = select_d2_folder();
+				let select_d2_path_check = _checkD2files(select_d2_path);
+
+				_savePathSettings(select_d2_path);
+				switch (select_d2_path_check)
+				{
+					case true:
+						return callback(null);
+
+					case _error.d2_path.d2exp_mpq:
+						return call_error(err_msg_lod_missing);
+
+					case _error.d2_path.game_exe:
+					case _error.d2_path.d2data_mpq:
+						return call_error(err_msg_files_missing + select_d2_path);
+						
+					//otherwise continue on
+				}
+				return call_error(err_msg_path_empy);
+
+			//otherwise continue on
+		}
+
+		switch (_checkD2files(paths.folder.launcher_parent))
+		{
+			case true:
+				_savePathSettings(paths.folder.launcher_parent);
+				return callback(null);
+
+			case _error.d2_path.d2exp_mpq:
+				_savePathSettings(paths.folder.launcher_parent);
+				return call_error(err_msg_lod_missing);
+
+			//otherwise continue on
+		}
+
+		switch (_checkD2files(reg_d2_path))
+		{
+			case true:
+				_savePathSettings(reg_d2_path);
+				return callback(null);
+
+			case _error.d2_path.d2exp_mpq:
+				_savePathSettings(reg_d2_path);
+				return call_error(err_msg_lod_missing);
+				
+			//otherwise continue on
+		}
+
+		//select manually
+		//call_error(err_msg_path_empy, null);
+		let select_d2_path = select_d2_folder();
+		let select_d2_path_check = _checkD2files(select_d2_path);
+
+		_savePathSettings(select_d2_path);
+		switch (select_d2_path_check)
+		{
+			case true:
+				return callback(null);
+
+			case _error.d2_path.d2exp_mpq:
+				return call_error(err_msg_lod_missing);
+
+			case _error.d2_path.game_exe:
+			case _error.d2_path.d2data_mpq:
+				return call_error(err_msg_files_missing + select_d2_path);
+				
+			//otherwise continue on
+		}
+		return call_error(err_msg_path_empy);
 	});
 }
 
