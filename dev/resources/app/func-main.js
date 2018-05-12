@@ -119,6 +119,7 @@ function getSettings(callback = null)
 
 function saveSettings(callback = null)
 {
+	if (settings.d2_path) settings.d2_path = path.resolve(settings.d2_path); //to remove trailing backslashes if the path isn't empty
 	let settings_data = JSONToString(settings);
 	writeFile(paths.file.settings, settings_data);
 	saveD2PathToRegForUninstall(callback ? callback(null) : null);
@@ -846,7 +847,7 @@ function checkGameHash(callback)
 		clogn('_patchGame() type: ' + (!isNull(type) ? type : 'null'));
 		if (err) log(err);
 
-		clogn('paths.file.hacked_D2gfx_dll = ' + paths.file.hacked_D2gfx_dll + ', D2gfx_dll_path = ' + D2gfx_dll_path);
+		clogn('copy/patch paths.file.hacked_D2gfx_dll = ' + paths.file.hacked_D2gfx_dll + 'to D2gfx_dll_path = ' + D2gfx_dll_path);
 		copyFile(paths.file.hacked_D2gfx_dll, D2gfx_dll_path); //hacked 1.13c D2gfx.dll that allows multiple D2 instances to run at the same time
 		if (type) copyFile(paths.folder.d2_113c, settings.d2_path);
 		if (type === 'rollback') copyFile(paths.file.hacked_storm_dll, storm_dll_path);
@@ -1080,6 +1081,7 @@ function getVersionInfo(callback)
 {
 	//get the latest versions from online
 	getJSON(url.version, (err, version_data) => {
+		clogn(url.version);
 		if (err)
 		{
 			log('Error getting latest patch_d2.mpq version info from the internet.');

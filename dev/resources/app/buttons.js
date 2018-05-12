@@ -188,6 +188,7 @@ ipcMain.on('close_settings', (event, _settings) => {
 	globalShortcut.unregister(hotkeys.closeSettings2);
 
 	var old_d2_path = settings.d2_path;
+	if (_settings.d2_path) _settings.d2_path = path.resolve(_settings.d2_path);
 	Object.assign(settings, _settings); //update settings from settings.html, use object.assign because settings.html doesn't have all properties. careful, deeper objects are referenced, not copied
 	
 	if (settings.video === 'glide')
@@ -197,13 +198,6 @@ ipcMain.on('close_settings', (event, _settings) => {
 	}
 	saveSettingsVideoReg(settings.video);
 	saveSettings();
-	status.settings_closed = true;
-	display('blackbox', false);
-	if (settingsWindow)
-	{
-		settingsWindow.hide();
-		settingsWindow.close();
-	}
 
 	if (old_d2_path !== settings.d2_path)
 	{
@@ -214,6 +208,16 @@ ipcMain.on('close_settings', (event, _settings) => {
 		waitForModFilesCheckup();
 		offlineChecks();
 	}
+	
+	status.settings_closed = true;
+	display('blackbox', false);
+	if (settingsWindow)
+	{
+		settingsWindow.hide();
+		settingsWindow.close();
+	}
+});
+
 });
 
 ipcMain.on('settings_glideWindowed', (event, windowed) => saveGlideWindowedReg(windowed));

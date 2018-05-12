@@ -253,7 +253,7 @@ function existsKeyVal(key, val, callback)
 //can also be used to just create a key
 function write(reg_data, callback)
 {
-	function _addKeyVal(key, val, type, data, _callback)
+	function _addKeyVal(key, val, type, data, _callback) //seems trailing '\\' messes up the function, reg process stays open and writes 'data = path" /f' for the value data
 	{
 		if (isNull(key) || key === '')
 		{

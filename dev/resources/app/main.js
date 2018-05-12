@@ -19,7 +19,7 @@ global.devTools = { //for non-dev build, all are false, except the hotkeys obvio
 	index: true, //allows the chrome dev tools to be turned on in index.html
 	settings: false, //allows the chrome dev tools to be turned on in settings.html
 	disableLauncherUpdates: false,
-	testEnvironment: true, //online environment for testing the launcher (mainly mod install and update, and launcher updates). launcher needs to be started with /test
+	testEnvironment: true, //online environment for testing the launcher (mainly mod install and update, and launcher updates). launcher needs to be started with /test=true
 };
 if (devTools.testEnvironment) devTools.testEnvironment = (process.argv.indexOf('/test=true') > 0);
 
@@ -116,19 +116,19 @@ const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
 		win.focus();
 	}
 });
-if (shouldQuit) app.quit(); //if this is a second instance, quit
+if (shouldQuit) return app.quit(); //if this is a second instance, quit
 
 app.on('window-all-closed', () => app.quit()); //http://electron.atom.io/docs/api/app/
 
 /*app.on('quit', () => { });*/
 
+//the most important part of the program
 app.on('ready', () => {
 	clogn('app ready');
 
-	//most important part of the program
 	isRunningAsAdmin((err_admin, admin) => {
 		if (err_admin) { log(err_admin); admin = false;	}
-		clogn('Running as admin: ' + admin);
+		clogn('Running as admin? ' + admin);
 		
 		if (!admin)
 		{
