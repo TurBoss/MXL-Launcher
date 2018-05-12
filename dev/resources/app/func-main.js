@@ -582,9 +582,15 @@ function waitForChecksDisplayButtons()
 function waitForModFilesCheckup()
 {
 	async.during(
-		(callback) => callback(null, isNull(status.online) || (isNull(status.checks.hash) && isNull(status.checks.size))),
+		(callback) => callback(null, (isNull(status.online) || (isNull(status.checks.hash) && isNull(status.checks.size))) && status.checks.offline !== false),
 		(callback) => setTimeout(callback, checks_frequency),
 		(err) => {
+			if (status.checks.offline === false) //early error in offline checks, eg. files missing
+			{
+				status.checks.patch_d2 = 'restart';
+				status.checks.dll = _error.dll.not_checked;
+				return;
+			}
 			if (!status.online)
 			{
 				status.checks.patch_d2 = 'offline';
@@ -681,12 +687,7 @@ function checkD2Path(callback)
 	{
 		let _err = err_msg ? new Error(err_msg) : null;
 		if (_err) edialog(_err);
-		if (_callback)
-		{
-			status.checks.patch_d2 = 'restart';
-			status.checks.dll = _error.dll.not_checked;
-			return _callback(_err);
-		}
+		if (_callback) return _callback(_err);
 	}
 	function select_d2_folder() //ask the user to specify the path to D2
 	{
