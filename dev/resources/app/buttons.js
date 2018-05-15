@@ -191,33 +191,60 @@ ipcMain.on('close_settings', (event, _settings) => {
 	if (_settings.d2_path) _settings.d2_path = path.resolve(_settings.d2_path);
 	Object.assign(settings, _settings); //update settings from settings.html, use object.assign because settings.html doesn't have all properties. careful, deeper objects are referenced, not copied
 	
-	if (settings.video === 'glide')
-	{
-		clogn('- settings mode = glide. save. call glideWindowed()');
-		saveGlideWindowedReg(settings.windowed === 'true'); //save glide windowed in reg
-	}
-	saveSettingsVideoReg(settings.video);
-	saveSettings();
+	checkPlugY(() => {
+		let enable_plugy = (settings.plugy === 'true');
+		togglePlugY(enable_plugy, (success) => {
+			if (!enable_plugy)
+			{
+				checkDlls(() => {
+					if (status.checks.dll === true) return _saveOtherSettings(old_d2_path);
+					getDlls(version.median.latest, err => { return _saveOtherSettings(old_d2_path); });
+				});
+				return;
+			}
+			return _saveOtherSettings(old_d2_path);
+		});
+	});
 
-	if (old_d2_path !== settings.d2_path)
+	function _saveOtherSettings(old_d2_path)
 	{
-		status.checks = copyObject(defaults.status.checks);
-		version.median.current = defaults.version.median.current;
-		version.median.current_name = defaults.version.median.current_name;
-		waitForChecksDisplayButtons();
-		waitForModFilesCheckup();
-		offlineChecks();
-	}
-	
-	status.settings_closed = true;
-	display('blackbox', false);
-	if (settingsWindow)
-	{
-		settingsWindow.hide();
-		settingsWindow.close();
+		//TODO:
+		//some of these things are async. we don't wait for them to all finish, which might cause problems if settings is turned on/off multiple times.
+		//it can also cause problems if the user clicks play before some of these are finished.
+		//should probably use async.parallel to wait until all are finished before closing the settings.
+
+		if (settings.video === 'glide')
+		{
+			clogn('- settings mode = glide. save. call glideWindowed()');
+			saveGlideWindowedReg(settings.windowed === 'true'); //save glide windowed in reg
+		}
+		saveSettingsVideoReg(settings.video);
+		saveSettings();
+
+		if (old_d2_path !== settings.d2_path)
+		{
+			status.checks = copyObject(defaults.status.checks);
+			version.median.current = defaults.version.median.current;
+			version.median.current_name = defaults.version.median.current_name;
+			waitForChecksDisplayButtons();
+			waitForModFilesCheckup();
+			offlineChecks();
+		}
+		
+		status.settings_closed = true;
+		display('blackbox', false);
+		if (settingsWindow)
+		{
+			settingsWindow.hide();
+			settingsWindow.close();
+		}
 	}
 });
 
+ipcMain.on('settings_PlugY', (event) => {
+	let running = isGameRunning(); //can't turn on plugy if the game is open or loading
+	clogn('settings_PlugY: isGameRunning() --> ' + running);
+	if (settingsWindow && event) settingsWindow.webContents.send('settings_returnPlugY', running);
 });
 
 ipcMain.on('settings_glideWindowed', (event, windowed) => saveGlideWindowedReg(windowed));

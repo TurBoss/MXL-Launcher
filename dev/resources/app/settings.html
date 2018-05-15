@@ -30,6 +30,7 @@
 				settings.skiptobnet = document.getElementById('skiptobnet').checked.toString();
 				settings.video = document.getElementById('video').value;
 				settings.d2_path = document.getElementById('d2_path').value;
+				settings.plugy = document.getElementById('plugy').checked.toString();
 
 				return settings;
 			}
@@ -66,6 +67,7 @@
 			<div class='content noselect'>
 				<h3>Settings</h3>
 				
+				<input id='plugy' type='checkbox' onchange='f("settings_PlugY", this.checked);'><label id='plugylabel' for='plugy'>Run the game with PlugY</label>
 				<input id='windowed' type='checkbox' onchange='clogn("windowed. glideWindowed()"); glideWindowed(this.checked);'><label id='windowedlabel' for='windowed'>Run the game in windowed mode</label>
 				<input id='no_sound' type='checkbox' onchange='noSoundWarning(this.checked);'><label for='no_sound'>Disable in-game sound</label>
 				<input id='skiptobnet' type='checkbox'><label for='skiptobnet'>Skip main menu and connect to multiplayer</label>
@@ -117,6 +119,7 @@
 				document.getElementById('no_sound').checked = (settings.no_sound === 'true');
 				document.getElementById('skiptobnet').checked = (settings.skiptobnet === 'true');
 				document.getElementById('d2_path').value = settings.d2_path;
+				document.getElementById('plugy').checked = (settings.plugy === 'true');
 
 				document.getElementById('video').value = (settings.video ? settings.video : 'ddraw');
 				switchVideoSettings(settings.video);
@@ -131,6 +134,14 @@
 
 			ipcRenderer.on('settings_returnGlideWindowed', (event, windowed) => {
 				document.getElementById('windowed').checked = windowed;
+			});
+
+			ipcRenderer.on('settings_returnPlugY', (event, running) => {
+				if (running)
+				{
+					document.getElementById('plugy').checked = !document.getElementById('plugy').checked;
+					dialog.showMessageBox(win_settings, {title: 'Not possible', type: 'info', message: 'Cannot toggle PlugY on/off while a game is running.', buttons: ["OK"] });
+				}
 			});
 
 			function selectFolder()

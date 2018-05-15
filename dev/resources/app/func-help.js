@@ -41,6 +41,8 @@ var export_func =
 	delFile,
 	createFolder,
 	getFolderContents,
+	walkSyncFlat, //superior version of getFolderContents, since it has subfolder recursion
+	walkSyncRelativeFlat, //superior version of getFolderContents, since it has subfolder recursion
 	getFileSize,
 	getFileHashSHA1,
 
@@ -213,6 +215,19 @@ function delFile(_path)
 function getFolderContents(_path)
 {
 	return fs.readdirSync(_path)
+}
+//https://gist.github.com/kethinov/6658166#gistcomment-2109513 edited a bit.
+//returns a list of all the files in a folder and its subfolders, relative to the folder, flattened
+function walkSyncFlat(d) 
+{
+	return fs.statSync(d).isDirectory() ? Array.prototype.concat(...fs.readdirSync(d).map(f => walkSyncFlat(path.join(d,f)))) : d;
+}
+function walkSyncRelativeFlat(d, rel_d = d) 
+{
+	let path_list = walkSyncFlat(d);
+	let count = path_list.length;
+	for (let i = 0; i < count; i++) path_list[i] = path.relative(rel_d, path_list[i]);
+	return path_list;
 }
 function getFileSize(_path)
 {

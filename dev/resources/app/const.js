@@ -36,6 +36,7 @@ global.exit_codes = {
 global._error = {
 	dll: {
 		version: 'wrong version',
+		plugy: 'plugy fog.dll invalid',
 		missing: 'files missing',
 		hash: 'hash error',
 		not_checked: 'not checked',
@@ -100,6 +101,8 @@ global.filename =
 	glide3x_dll: 'glide3x.dll',
 	glide_readme_ger: 'glide-liesmich.txt',
 	glide_readme_eng: 'glide-readme.txt',
+
+	plugy_ini: 'PlugY.ini',
 };
 global.uninstall_rollback_folder_name = 'MedianUninsRollback';
 global.uninstall_rollback_file_names =
@@ -147,6 +150,7 @@ paths.folder.installation = path.relative(paths.folder.launcher, paths.folder.ap
 paths.folder.img = paths.folder.assets + '\\img';
 paths.folder.d2_113c = paths.folder.installation + '\\1.13c_files';
 paths.folder.glide = paths.folder.installation + '\\glide_v14e';
+paths.folder.plugy = paths.folder.installation + '\\plugy_10.00'; //Fog.dll from inside is the same as Fog_dll_v113c_sha1. D2gfx.dll is a special hacked version that loads PlugY on game start.
 paths.folder.unzip = paths.folder.external;
 
 paths.file =
@@ -163,6 +167,8 @@ paths.file =
 	Fog_dll: path.resolve(paths.folder.launcher, paths.folder.d2_113c + '\\' + filename.fog_dll), //clean 1.13c Fog.dll, not the edited one that median uses
 	hacked_storm_dll: path.resolve(paths.folder.launcher, paths.folder.installation + '\\' + filename.storm_dll), //allows all 1.14 versions to work when rolled back to 1.13c, slightly buggy (?)
 	hacked_D2gfx_dll: path.resolve(paths.folder.launcher, paths.folder.installation + '\\' + filename.D2gfx_dll), //allows multiple 1.13c instances to run at the same time
+	plugy_D2gfx_dll: path.resolve(paths.folder.launcher, paths.folder.plugy + '\\' + filename.D2gfx_dll), //allows plugy to run when the game is started
+	plugy_ini: path.resolve(paths.folder.launcher, paths.folder.plugy + '\\' + filename.plugy_ini), //plugy settings
 };
 
 /***** URLS *****/
@@ -594,3 +600,8 @@ global.game_cmd_arg =
 	direct: '-direct',
 	txt: '-txt',
 };
+
+/***** OTHER *****/
+
+global.plugy_ini_str1 = 'DllToLoad=MXL.dll';
+global.plugy_ini_str2 = 'DllToLoad2=MXL.dll';

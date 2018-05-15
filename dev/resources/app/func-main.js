@@ -3,6 +3,7 @@
 /********* MODULES ********/
 
 if (typeof async === 'undefined') global.async = require('async'); //for chaining or parallel async callbacks
+if (typeof path === 'undefined') global.path = require('path'); //for chaining or parallel async callbacks
 if (typeof app === 'undefined') global.app = require('electron').app;
 if (typeof BrowserWindow === 'undefined') global.BrowserWindow = require('electron').BrowserWindow;
 
@@ -17,6 +18,7 @@ var export_func =
 	saveSettings,
 	createMainWindow,
 	createSettingsWindow,
+	togglePlugY,
 	restartLauncherAndRun,
 	compareVersions,
 	fetchLauncherUpdates,
@@ -33,6 +35,8 @@ var export_func =
 	writeVideoSettingsToReg,
 	getRendererString,
 	getVideoRendererFromReg,
+	isGameRunning,
+	checkPlugY,
 	checkD2Compatibility,
 	addTSWReg,
 	getVersionInfo,
@@ -249,6 +253,51 @@ function createSettingsWindow()
 		display('settings');
 	});
 	return settingsWindow;
+}
+
+function isGameRunning()
+{
+	return (status.game_count.active || status.game_count.loading);
+}
+
+function togglePlugY(enable, callback)
+{
+	if (isGameRunning()) return callback(false); //here check if a game is open/loading, quit function if yes
+	if (enable)
+	{
+		//copyFile(path.resolve(settings.d2_path, filename.fog_dll), path.resolve(settings.d2_path, filename.fog_dll + ext.temp));
+		copyFile(paths.file.Fog_dll, path.resolve(settings.d2_path, filename.fog_dll)); //plugy needs the unhacked Fog.dll
+		copyFile(paths.file.plugy_D2gfx_dll, path.resolve(settings.d2_path, filename.D2gfx_dll)); //this hacked version loads plugy
+	}
+	else
+	{
+		copyFile(paths.file.hacked_D2gfx_dll, path.resolve(settings.d2_path, filename.D2gfx_dll)); //this hacked version allows you to run multiple instances of D2
+		//if (pathExists(path.resolve(settings.d2_path, filename.fog_dll + ext.temp))) copyFile(path.resolve(settings.d2_path, filename.fog_dll + ext.temp), path.resolve(settings.d2_path, filename.fog_dll));
+		//median Fog.dll will be handled by checkDlls and getDlls functions
+	}
+	return callback(true);
+}
+
+function checkPlugY(callback) //checks if plugy files are missing, and copies them
+{
+	clogn('checkPlugY()');
+
+	let plugy_content = walkSyncRelativeFlat(paths.folder.plugy);
+	plugy_content.forEach(file => {
+		//clogn('file plugy: ' + file + '  ::  copy location: ' + settings.d2_path + '\\' + file + '  ::  copy loc exists: ' + pathExists(settings.d2_path + '\\' + file));
+		if (!pathExists(path.resolve(settings.d2_path, file))) copyFile(path.resolve(paths.folder.plugy, file), path.resolve(settings.d2_path, file));
+	});
+
+	let plugy_ini = readFile(path.resolve(settings.d2_path, filename.plugy_ini));
+	let plugy_ini_no_whitespace = plugy_ini.replace(/\s/g, '');
+	if ((plugy_ini_no_whitespace.indexOf(plugy_ini_str1) === -1) && (plugy_ini_no_whitespace.indexOf(plugy_ini_str2) === -1)) //check if we have DllToLoad=MXL.dll or DllToLoad2=MXL.dll in PlugY.ini.
+	{
+		//clogn('default ini path: ' + paths.file.plugy_ini + '  ::  copy to path: ' + settings.d2_path + '\\' + filename.plugy_ini);
+		copyFile(paths.file.plugy_ini, path.resolve(settings.d2_path, filename.plugy_ini)); //writeFile(path, plugy_ini); //if we don't, copy PlugY.ini that has it
+		//it would be preferable to just change one of the DllToLoad entries to MXL.dll instead of copying the file and overwriting all the settings
+	}
+
+	callback(null);
 }
 
 //restarts the launcher if no script_path is specified
@@ -627,6 +676,7 @@ function offlineChecks()
 				getPatchD2Hash, //--> status.checks.hash
 				checkVidTest,
 				checkGlide,
+				checkPlugY,
 				checkD2Compatibility,
 				checkGameHash,
 				addTSWReg,
@@ -794,7 +844,6 @@ function checkGameHash(callback)
 	clogn('checkGameHash()');
 
 	var game_exe_path = settings.d2_path + '\\' + filename.game_exe;
-	var D2gfx_dll_path = settings.d2_path + '\\' + filename.D2gfx_dll;
 	var storm_dll_path = settings.d2_path + '\\' + filename.storm_dll;
 	var storm_dll_exists = pathExists(storm_dll_path);
 
@@ -848,8 +897,6 @@ function checkGameHash(callback)
 		clogn('_patchGame() type: ' + (!isNull(type) ? type : 'null'));
 		if (err) log(err);
 
-		clogn('copy/patch paths.file.hacked_D2gfx_dll = ' + paths.file.hacked_D2gfx_dll + 'to D2gfx_dll_path = ' + D2gfx_dll_path);
-		copyFile(paths.file.hacked_D2gfx_dll, D2gfx_dll_path); //hacked 1.13c D2gfx.dll that allows multiple D2 instances to run at the same time
 		if (type) copyFile(paths.folder.d2_113c, settings.d2_path);
 		if (type === 'rollback') copyFile(paths.file.hacked_storm_dll, storm_dll_path);
 		callback(null);
@@ -1210,11 +1257,11 @@ function checkDlls(callback)
 {
 	clogn('checkDlls()');
 
-	if (version.median.current && (parseInt(version.median.current.split('.')[0]) < 17) && !status.online) //there were no dlls in pre Median 2017 versions
+	/*if (version.median.current && (parseInt(version.median.current.split('.')[0]) < 17) && !status.online) //there were no dlls in pre Median 2017 versions
 	{
 		status.checks.dll = true;
 		return callback(null);
-	}
+	}*/
 
 	var mxl_dll_path = settings.d2_path + '\\' + filename.mxl_dll;
 	var fog_dll_path = settings.d2_path + '\\' + filename.fog_dll;
@@ -1235,12 +1282,19 @@ function checkDlls(callback)
 				status.checks.dll = _error.dll.hash;
 				return callback(null);
 			}
-			if (hash !== Fog_dll_m2017_sha1)
+			if (settings.plugy !== 'true' && hash !== Fog_dll_m2017_sha1)
 			{
 				status.checks.dll = _error.dll.version;
 				//saveD2FilesForUninstallRollback([filename.fog_dll]); //we back up files so we can restore them after uninstall
 				return callback(null);
 			}
+			else if (settings.plugy === 'true' && hash !== Fog_dll_v113c_sha1)
+			{
+				status.checks.dll = _error.dll.plugy;
+				//saveD2FilesForUninstallRollback([filename.fog_dll]); //we back up files so we can restore them after uninstall
+				return callback(null);
+			}
+
 			status.checks.dll = true;
 			return callback(null);
 		});
@@ -1249,7 +1303,7 @@ function checkDlls(callback)
 
 function getDlls(_version, callback)
 {
-	if (version.median.current && (parseInt(version.median.current.split('.')[0]) < 17) && !status.online) return callback(null);
+	//if (version.median.current && (parseInt(version.median.current.split('.')[0]) < 17) && !status.online) return callback(null);
 
 	let file_name = sprintf(filename.dlls_update, _version);
 	let destination_path = settings.d2_path + '\\' + file_name;
@@ -1262,7 +1316,10 @@ function getDlls(_version, callback)
 		if (err)
 		{
 			delFile(part_destination_path);
-			return callback(err);
+			togglePlugY(settings.plugy === 'true', () => {
+				return callback(err);
+			});
+			return;
 		}
 
 		renameFile(part_destination_path, destination_path);
@@ -1270,7 +1327,10 @@ function getDlls(_version, callback)
 		unzipFile(destination_path, settings.d2_path, (_err, stdout, stderr) => { //check output, is it text or exit code
 			if (_err) { clogn(_err); clogn(stderr); }
 			else delFile(destination_path);
-			callback(_err);
+			togglePlugY(settings.plugy === 'true', () => {
+				return callback(_err);
+			});
+			return;
 		});
 	});
 }

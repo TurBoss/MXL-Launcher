@@ -54,6 +54,7 @@ global.defaults = {
 		maximized: 'false',
 		direct: 'false',
 		txt: 'false',
+		plugy: 'false',
 	},
 
 	status: { //holds the status of various async and sync checks, along with some data
@@ -175,6 +176,7 @@ app.on('ready', () => {
 					getPatchD2Hash, sets --> status.checks.hash
 					checkVidTest,
 					checkGlide,
+					checkPlugY,
 					checkD2Compatibility,
 					checkGameHash,
 					addTSWReg,
