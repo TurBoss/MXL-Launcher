@@ -13,7 +13,7 @@ It is built on [Node.js](https://nodejs.org/) & [Electron](https://electronjs.or
 ## Download
 
 The latest Launcher setup can be downloaded from:  
-https://get.median-xl.com/launcher/
+https://get.median-xl.com/launcher
 
 ____
 
