@@ -15,7 +15,7 @@ Source files are split between the Launcher and Builder:
 
 
 #### Files in detail
-Located in the [root](https://github.com/Median-XL/) of the repository:
+Located in the [root](https://github.com/Median-XL/MXL-Launcher) of the repository:
 * [test.bat](test.bat) - quick testing of source code changes, also uses the online test environment that uses a cusom versions list file. I suggest you change `devTools.enableConsoleLog` option in [dev/resources/app/main.js](dev/resources/app/main.js) from `false` to `true` to see the command line debug output.
 * [make.bat](make.bat) - builds the Launcher files/setup/update. Checks version number missmatches in all **package.json**s. Asks if update should contain just the app folder or all binaries.  
 * [update.bat](update.bat) - updates the Launcher modules, Builder modules, and dev test version of the Launcher binaries and modules.
@@ -62,7 +62,7 @@ Most of the building/compiling process is handled by the [make.bat](make.bat) ba
 
 ## PUBLISHING
 1. Upload files to the appropriate location.
-2. Add the new Launcher version to [http://get.median-xl.com/launcher/get.php?get=versions](http://get.median-xl.com/launcher/get.php?get=versions).
+2. Add the new Launcher version to [http://get.median-xl.com/launcher/?get=versions](http://get.median-xl.com/launcher/?get=versions).
 3. Commit to [MXL-Launcher](https://gitlab.com/Median-XL/MXL-Launcher), and create a tag with the new version numbers.
 
 #### HOW TO CREATE/UPDATE THE BUILDER?
@@ -77,7 +77,7 @@ ____
 2. Create an *xdelta* difference patch from the last to the new version: `"path to xdelta3.exe" -v -f -A= -S lzma -9 -B 419430400 -W 16777216 -s "path to the old patch_d2.mpq" "path to the new patch_d2.mpq" "X.X.X.update"`.
 3. Upload the *xdelta* difference patch **X.X.X.update** to the appropriate location.
 4. Calculate the *sha1 hash* of the new **patch_d2.mpq**. Open the *command prompt* and type `"path to 7za.exe" h -scrcsha1 "path to patch_d2.mpq"` in the command prompt (**7za.exe** is in [dev/resources/external/7za.exe](dev/resources/external/7za.exe)).
-5. Add the new version numbers/name/hash/size to [http://get.median-xl.com/launcher/get.php?get=versions](http://get.median-xl.com/launcher/get.php?get=versions).
+5. Add the new version numbers/name/hash/size to [http://get.median-xl.com/launcher/?get=versions](http://get.median-xl.com/launcher/?get=versions).
 6. 7-zip **msvcr110.dll**, **Fog.dll**, and **MXL.dll** to **X.X.X.dll.update** and upload it to the appropriate location.
 7. Update the variable `Fog_dll_m2017_sha1` in [dev/resources/app/const.js](dev/resources/app/const.js) with the **Fog.dll** *sha1 hash*, if it was changed.
 8. Commit to [MXL-Launcher](https://gitlab.com/Median-XL/MXL-Launcher), and create a tag with the new version numbers.
@@ -93,3 +93,4 @@ ____
 * Check the *npm* version with `npm -v`. If it's outdated, you can update it with `npm -g i npm`.
 * Check the *Node.js* version with `node -v`. To update it, reinstall it.
 * You can manually change the metadata/icons of executables with the [ResourceHacker](http://www.angusj.com/resourcehacker/resource_hacker.zip) program instead of doing it with **package.json**s and *Inno Setup* scripts.
+* Test version of the http://get.median-xl.com/launcher/ can be used if you add `test=true` as part of the uri, eg. http://get.median-xl.com/launcher/?test=true&get=versions . This is used if you run the developer version of the Launcher with [test.bat](test.bat).
