@@ -16,8 +16,8 @@ ____
 
 * Run [update.bat](update.bat) to create Builder and Launcher modules, and the dev test version of the Launcher after pulling the repo.
 * [test.bat](test.bat) runs the dev test version of the Launcher, useful for quickly testing dev code without building every time.  
-* [make.bat](make.bat) creates the Launcher files/setup/update in the [dist](dist) folder, ready for publishing.
-* Source code and assets/resources are in [dev\resources\app](dev\resources\app), [dev\resources\external](dev\resources\external), and [installer](installer).  
+* [make.bat](make.bat) creates the Launcher files/setup/update in the *dist* folder, ready for publishing.
+* Source code and assets/resources are in [dev/resources/app](dev/resources/app), [dev/resources/external](dev/resources/external), and [installer](installer).  
 * For additional building and details, see [BUILD](BUILD.md).
 
 ## Screenshots
@@ -25,4 +25,4 @@ ____
 ![Median XL Launcher settings window screenshot](Screenshot2.jpg "Median XL Launcher settings window screenshot")
 
 ## License
-[GNU General Public License v3.0](LICENCE)
+[GNU General Public License v3.0](LICENSE)
