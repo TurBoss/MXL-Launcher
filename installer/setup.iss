@@ -196,11 +196,11 @@ begin
     begin
       DelTree(ExpandConstant('{app}\settings.json'), False, True, False);
       DelTree(ExpandConstant('{app}\error_log.txt'), False, True, False);
-      if DirExists(ExpandConstant('{app}')) and isEmptyDir(ExpandConstant('{app}')) then
-      begin
-         DelTree(ExpandConstant('{app}'), True, True, True);
-      end;
-      //DelTree(ExpandConstant('{app}'), True, True, True);
+      //if DirExists(ExpandConstant('{app}')) and isEmptyDir(ExpandConstant('{app}')) then
+      //begin
+      //   DelTree(ExpandConstant('{app}'), True, True, True);
+      //end;
+      DelTree(ExpandConstant('{app}'), True, True, True);
       //RegDeleteKeyIncludingSubkeys(HKEY_CURRENT_USER, '{#RegLauncher}');
     end;
   end;
