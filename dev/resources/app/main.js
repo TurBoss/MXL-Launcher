@@ -15,11 +15,11 @@ global.async = require('async'); //for chaining or parallel async callbacks
 /************ DEV OPTIONS ************/
 
 global.devTools = { //for non-dev build, all are false, except the hotkeys obviously
-	enableConsoleLog: true, //enables logging to the console (for example, if started from the command line)
-	index: true, //allows the chrome dev tools to be turned on in index.html
-	settings: true, //allows the chrome dev tools to be turned on in settings.html
+	enableConsoleLog: false, //enables logging to the console (for example, if started from the command line)
+	index: false, //allows the chrome dev tools to be turned on in index.html
+	settings: false, //allows the chrome dev tools to be turned on in settings.html
 	disableLauncherUpdates: false,
-	testEnvironment: true, //online environment for testing the launcher (mainly mod install and update, and launcher updates). launcher needs to be started with /test=true
+	testEnvironment: false, //online environment for testing the launcher (mainly mod install and update, and launcher updates). launcher needs to be started with /test=true
 };
 if (devTools.testEnvironment) devTools.testEnvironment = (process.argv.indexOf('/test=true') > 0);
 
