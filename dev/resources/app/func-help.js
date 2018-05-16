@@ -30,6 +30,7 @@ var export_func =
 	log,
 	edialog,
 	idialog,
+	choiceDialog,
 
 	pathExists,
 	readFile,

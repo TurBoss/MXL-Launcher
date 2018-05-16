@@ -24,7 +24,7 @@ global.display = ((name, enable = true) => {
 
 /*OTHER BUTTON */
 ipcMain.on('close', (event) => {
-	if (status.game_count.active || status.game_count.loading)
+	/*if (status.game_count.active || status.game_count.loading)
 	{
 		choiceDialog('Quit', 'Are you sure you want to close the game and quit?', btn_id => {
 			if (btn_id === 1) return;
@@ -33,10 +33,10 @@ ipcMain.on('close', (event) => {
 		});
 	}
 	else
-	{
+	{*/
 		win.hide();
 		win.close();
-	}
+	//}
 });
 
 ipcMain.on('min', (event) => win.minimize());
