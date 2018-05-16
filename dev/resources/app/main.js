@@ -216,7 +216,7 @@ app.on('ready', () => {
 			let upd_part_pos = folder_content[i].indexOf(ext.part);
 			if (upd_part_pos !== -1) //delete partial update downloads
 			{
-				delFile(paths.folder.launcher + folder_content[i]);
+				delFile(path.resolve(paths.folder.launcher, folder_content[i]));
 				continue;
 			}
 			if (upd_pre_pos === -1 || upd_suf_pos === -1) continue;
@@ -224,10 +224,10 @@ app.on('ready', () => {
 			if (compareVersions(current_ver, ver).isNeeded && compareVersions(latest_update, ver).isNeeded)
 				latest_update = ver;
 			else
-				delFile(paths.folder.launcher + folder_content[i]); //delete lower version updates
+				delFile(path.resolve(paths.folder.launcher, folder_content[i])); //delete lower version updates
 		}
 
-		paths.file.update = latest_update ? (paths.folder.launcher + upd_prefix + latest_update + ext.upd) : '';
+		paths.file.update = latest_update ? (path.resolve(paths.folder.launcher, upd_prefix + latest_update + ext.upd)) : '';
 		return paths.file.update;
 	}
 

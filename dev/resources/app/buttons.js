@@ -71,7 +71,7 @@ ipcMain.on('run_game', (event) => {
 
 	if (settings.d2_path)
 	{
-		var _path = settings.d2_path + '\\' + filename.game_exe;
+		var _path = path.resolve(settings.d2_path, filename.game_exe);
 		var args = [
 			(settings.windowed === 'true' && settings.video !== 'd3d') ? game_cmd_arg.windowed : '',
 			(settings.no_sound === 'true') ? game_cmd_arg.no_sound : '',
@@ -252,7 +252,7 @@ ipcMain.on('settings_glideWindowed', (event, windowed) => saveGlideWindowedReg(w
 ipcMain.on('settings_saveRendererReg', (event, mode) => saveSettingsVideoReg(mode));
 
 ipcMain.on('settings_glide', (event, _path) => {
-	var glide_init_exe_path = _path + '\\' + filename.glide_exe;
+	var glide_init_exe_path = path.resolve(_path, filename.glide_exe);
 	if (glide_init_exe_path)
 	{
 		runProgram(glide_init_exe_path, [], _path, (err, stdout, strerr) => {
@@ -277,7 +277,7 @@ ipcMain.on('settings_glide', (event, _path) => {
 });
 
 ipcMain.on('settings_vidtest', (event, _path) => {
-	var vidtest_path = _path + '\\' + filename.d2vidtst_exe;
+	var vidtest_path = path.resolve(_path, filename.d2vidtst_exe);
 	if (vidtest_path)
 	{
 		runProgram(vidtest_path, [], _path, (err, stdout, stderr) => { 

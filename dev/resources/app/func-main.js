@@ -78,7 +78,7 @@ function saveD2FilesForUninstallRollback(files = null)
 {
 	clogn('saveD2FilesForUninstallRollback(): ' + files);
 	if (!files) files = uninstall_rollback_file_names;
-	var rollback_path = settings.d2_path + '\\' + uninstall_rollback_folder_name;
+	var rollback_path = path.resolve(settings.d2_path, uninstall_rollback_folder_name);
 	if (!pathExists(rollback_path))
 	{
 		createFolder(rollback_path);
@@ -87,8 +87,8 @@ function saveD2FilesForUninstallRollback(files = null)
 		let file_backup_path, file_path, file_size;
 		for (let file of files)
 		{
-			file_backup_path = rollback_path + '\\' + file;
-			file_path = settings.d2_path + '\\' + file;
+			file_backup_path = path.resolve(rollback_path, file);
+			file_path = path.resolve(settings.d2_path, file);
 			if (!pathExists(file_backup_path) && pathExists(file_path))
 			{
 				if (!warningFlag && (getFileSize(file_path) > limitMB)) //check file size and warn one time if a file is larger than 5 mb
@@ -284,7 +284,7 @@ function checkPlugY(callback) //checks if plugy files are missing, and copies th
 
 	let plugy_content = walkSyncRelativeFlat(paths.folder.plugy);
 	plugy_content.forEach(file => {
-		//clogn('file plugy: ' + file + '  ::  copy location: ' + settings.d2_path + '\\' + file + '  ::  copy loc exists: ' + pathExists(settings.d2_path + '\\' + file));
+		//clogn('file plugy: ' + file + '  ::  copy location: ' + path.resolve(settings.d2_path, file) + '  ::  copy loc exists: ' + pathExists(path.resolve(settings.d2_path, file)));
 		if (!pathExists(path.resolve(settings.d2_path, file))) copyFile(path.resolve(paths.folder.plugy, file), path.resolve(settings.d2_path, file));
 	});
 
@@ -292,7 +292,7 @@ function checkPlugY(callback) //checks if plugy files are missing, and copies th
 	let plugy_ini_no_whitespace = plugy_ini.replace(/\s/g, '');
 	if ((plugy_ini_no_whitespace.indexOf(plugy_ini_str1) === -1) && (plugy_ini_no_whitespace.indexOf(plugy_ini_str2) === -1)) //check if we have DllToLoad=MXL.dll or DllToLoad2=MXL.dll in PlugY.ini.
 	{
-		//clogn('default ini path: ' + paths.file.plugy_ini + '  ::  copy to path: ' + settings.d2_path + '\\' + filename.plugy_ini);
+		//clogn('default ini path: ' + paths.file.plugy_ini + '  ::  copy to path: ' + path.resolve(settings.d2_path, filename.plugy_ini));
 		copyFile(paths.file.plugy_ini, path.resolve(settings.d2_path, filename.plugy_ini)); //writeFile(path, plugy_ini); //if we don't, copy PlugY.ini that has it
 		//it would be preferable to just change one of the DllToLoad entries to MXL.dll instead of copying the file and overwriting all the settings
 	}
@@ -404,7 +404,7 @@ function fetchLauncherUpdates(callback = null)
 	}
 	
 	let file_name = sprintf(filename.launcher_update, version.launcher.latest);
-	let destination_path = paths.folder.launcher + file_name;
+	let destination_path = path.resolve(paths.folder.launcher, file_name);
 	if (pathExists(destination_path))
 	{
 		clogn('fetchLauncherUpdates() update already downloaded ' + destination_path);
@@ -501,8 +501,8 @@ function downloadPatch(full, callback)
 			}
 		}
 
-		let destination_path = settings.d2_path + '\\' + file_name;
-		let patch_d2_mpq_path = settings.d2_path + '\\' + filename.patch_d2_mpq;
+		let destination_path = path.resolve(settings.d2_path, file_name);
+		let patch_d2_mpq_path = path.resolve(settings.d2_path, filename.patch_d2_mpq);
 		let part_destination_path = destination_path + ext.part;
 		let patch_d2_mpq_temp_path = patch_d2_mpq_path + ext.temp;
 		let err = null;
@@ -843,8 +843,8 @@ function checkGameHash(callback)
 {
 	clogn('checkGameHash()');
 
-	var game_exe_path = settings.d2_path + '\\' + filename.game_exe;
-	var storm_dll_path = settings.d2_path + '\\' + filename.storm_dll;
+	var game_exe_path = path.resolve(settings.d2_path, filename.game_exe);
+	var storm_dll_path = path.resolve(settings.d2_path, filename.storm_dll);
 	var storm_dll_exists = pathExists(storm_dll_path);
 
 	var game_v113c_index = game.version.indexOf('1.13c');
@@ -919,7 +919,7 @@ function checkVidTest(callback)
 		return callback(err);
 	}
 
-	var d2vidtst_exe_path = settings.d2_path + '\\' + filename.d2vidtst_exe;
+	var d2vidtst_exe_path = path.resolve(settings.d2_path, filename.d2vidtst_exe);
 	var d2vidtst_exe_exists = pathExists(d2vidtst_exe_path);
 	if (!d2vidtst_exe_exists) copyFile(paths.file.d2vidtst, d2vidtst_exe_path);
 
@@ -978,10 +978,10 @@ function checkGlide(callback)
 {
 	clogn('checkGlide()');
 	
-	var glide_init_exe_path = settings.d2_path + '\\' + filename.glide_exe;
-	var glide3x_dll_path = settings.d2_path + '\\' + filename.glide3x_dll;
-	var glide_liesmich_txt_path = settings.d2_path + '\\' + filename.glide_readme_ger;
-	var glide_readme_txt_path = settings.d2_path + '\\' + filename.glide_readme_eng;
+	var glide_init_exe_path = path.resolve(settings.d2_path, filename.glide_exe);
+	var glide3x_dll_path = path.resolve(settings.d2_path, filename.glide3x_dll);
+	var glide_liesmich_txt_path = path.resolve(settings.d2_path, filename.glide_readme_ger);
+	var glide_readme_txt_path = path.resolve(settings.d2_path, filename.glide_readme_eng);
 
 	var glide_init_exe_exists = pathExists(glide_init_exe_path);
 	var glide3x_dll_exists = pathExists(glide3x_dll_path);
@@ -1087,9 +1087,9 @@ function checkD2Compatibility(callback)
 	//add run as admin for d2, otherwise produces "Failed to retrieve process." error on start
 
 	let D2VidTst_exe_options = ['~', compatiblity_run_as_admin, compatiblity_xp].join(' ');
-	let D2VidTst_exe_target_path = settings.d2_path + '\\' + filename.d2vidtst_exe;
-	let game_exe_path = settings.d2_path + '\\' + filename.game_exe;
-	let diablo_ii_exe_path = settings.d2_path + '\\' + filename.diablo_ii_exe;
+	let D2VidTst_exe_target_path = path.resolve(settings.d2_path, filename.d2vidtst_exe);
+	let game_exe_path = path.resolve(settings.d2_path, filename.game_exe);
+	let diablo_ii_exe_path = path.resolve(settings.d2_path, filename.diablo_ii_exe);
 
 	async.parallel(
 		[
@@ -1155,7 +1155,7 @@ function getVersionInfo(callback)
 //gets patch_d2.mpq hash or size (default)
 function _getPatchD2Data(type, callback)
 {
-	var patch_d2_mpq_path = settings.d2_path + '\\' + filename.patch_d2_mpq;
+	var patch_d2_mpq_path = path.resolve(settings.d2_path, filename.patch_d2_mpq);
 	if (!pathExists(patch_d2_mpq_path))
 	{
 		status.checks[type] = false;
@@ -1263,9 +1263,9 @@ function checkDlls(callback)
 		return callback(null);
 	}*/
 
-	var mxl_dll_path = settings.d2_path + '\\' + filename.mxl_dll;
-	var fog_dll_path = settings.d2_path + '\\' + filename.fog_dll;
-	var msvcr110_dll_path = settings.d2_path + '\\' + filename.msvcr110_dll;
+	var mxl_dll_path = path.resolve(settings.d2_path, filename.mxl_dll);
+	var fog_dll_path = path.resolve(settings.d2_path, filename.fog_dll);
+	var msvcr110_dll_path = path.resolve(settings.d2_path, filename.msvcr110_dll);
 
 	if (!pathExists(mxl_dll_path) || !pathExists(fog_dll_path) || !pathExists(msvcr110_dll_path))
 	{
@@ -1306,7 +1306,7 @@ function getDlls(_version, callback)
 	//if (version.median.current && (parseInt(version.median.current.split('.')[0]) < 17) && !status.online) return callback(null);
 
 	let file_name = sprintf(filename.dlls_update, _version);
-	let destination_path = settings.d2_path + '\\' + file_name;
+	let destination_path = path.resolve(settings.d2_path, file_name);
 	let part_destination_path = destination_path + ext.part;
 	let err = null;
 	delFile(destination_path);
