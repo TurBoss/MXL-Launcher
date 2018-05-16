@@ -138,28 +138,28 @@ paths.folder.external = path.resolve(paths.folder.launcher, 'resources\\external
 //these don't end with \ :
 paths.folder.assets = path.relative(paths.folder.launcher, path.resolve(paths.folder.app, 'assets'));
 paths.folder.installation = path.relative(paths.folder.launcher, path.resolve(paths.folder.app, 'installation'));
-paths.folder.img = path.resolve(paths.folder.assets, 'img');
-paths.folder.d2_113c = path.resolve(paths.folder.installation, '1.13c_files');
-paths.folder.glide = path.resolve(paths.folder.installation, 'glide_v14e');
-paths.folder.plugy = path.resolve(paths.folder.installation, 'plugy_10.00'); //Fog.dll from inside is the same as Fog_dll_v113c_sha1. D2gfx.dll is a special hacked version that loads PlugY on game start.
+paths.folder.img = path.join(paths.folder.assets, 'img');
+paths.folder.d2_113c = path.join(paths.folder.installation, '1.13c_files');
+paths.folder.glide = path.join(paths.folder.installation, 'glide_v14e');
+paths.folder.plugy = path.join(paths.folder.installation, 'plugy_10.00'); //Fog.dll from inside is the same as Fog_dll_v113c_sha1. D2gfx.dll is a special hacked version that loads PlugY on game start.
 paths.folder.unzip = paths.folder.external;
 
 paths.file =
 {
 	launcher_exe: path.resolve(paths.folder.launcher, filename.launcher_exe),
-	icon: path.resolve(paths.folder.img, 'icon.png'),
+	icon: path.join(paths.folder.img, 'icon.png'),
 	settings: path.resolve(paths.folder.launcher, 'settings.json'),
-	package: path.resolve(paths.folder.app, 'package.json'),
+	package: path.join(paths.folder.app, 'package.json'),
 	error_log: path.resolve(paths.folder.launcher, 'error_log.txt'),
 	unzip_7z: path.resolve(paths.folder.external, filename.unzip_exe), //v16.04 //used in unzipFile() function
 	xdelta: path.resolve(paths.folder.external, 'xdelta3.exe'), //v3.0.11 //used in patch_xdelta() function
 	update: '', //updater file path. it's set after starting since it's named after a version, gotta get it from the internet
-	d2vidtst: path.resolve(paths.folder.d2_113c, filename.d2vidtst_exe),
-	Fog_dll: path.resolve(paths.folder.launcher, paths.folder.d2_113c, filename.fog_dll), //clean 1.13c Fog.dll, not the edited one that median uses
-	hacked_storm_dll: path.resolve(paths.folder.launcher, paths.folder.installation, filename.storm_dll), //allows all 1.14 versions to work when rolled back to 1.13c, slightly buggy (?)
-	hacked_D2gfx_dll: path.resolve(paths.folder.launcher, paths.folder.installation, filename.D2gfx_dll), //allows multiple 1.13c instances to run at the same time
-	plugy_D2gfx_dll: path.resolve(paths.folder.launcher, paths.folder.plugy, filename.D2gfx_dll), //allows plugy to run when the game is started
-	plugy_ini: path.resolve(paths.folder.launcher, paths.folder.plugy, filename.plugy_ini), //plugy settings
+	d2vidtst: path.join(paths.folder.d2_113c, filename.d2vidtst_exe),
+	Fog_dll: path.join(paths.folder.d2_113c, filename.fog_dll), //clean 1.13c Fog.dll, not the edited one that median uses
+	hacked_storm_dll: path.join(paths.folder.installation, filename.storm_dll), //allows all 1.14 versions to work when rolled back to 1.13c, slightly buggy (?)
+	hacked_D2gfx_dll: path.join(paths.folder.installation, filename.D2gfx_dll), //allows multiple 1.13c instances to run at the same time
+	plugy_D2gfx_dll: path.join(paths.folder.plugy, filename.D2gfx_dll), //allows plugy to run when the game is started
+	plugy_ini: path.join(paths.folder.plugy, filename.plugy_ini), //plugy settings
 };
 
 /***** URLS *****/

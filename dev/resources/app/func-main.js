@@ -287,7 +287,7 @@ function checkPlugY(callback) //checks if plugy files are missing, and copies th
 	let plugy_content = walkSyncRelativeFlat(paths.folder.plugy);
 	plugy_content.forEach(file => {
 		//clogn('file plugy: ' + file + '  ::  copy location: ' + path.resolve(settings.d2_path, file) + '  ::  copy loc exists: ' + pathExists(path.resolve(settings.d2_path, file)));
-		if (!pathExists(path.resolve(settings.d2_path, file))) copyFile(path.resolve(paths.folder.plugy, file), path.resolve(settings.d2_path, file));
+		if (!pathExists(path.resolve(settings.d2_path, file))) copyFile(path.join(paths.folder.plugy, file), path.resolve(settings.d2_path, file));
 	});
 
 	let plugy_ini = readFile(path.resolve(settings.d2_path, filename.plugy_ini));
