@@ -205,6 +205,7 @@ function delFile(_path)
 	}
 	catch (err)
 	{
+		if (err.code === 'EBUSY') return;
 		if (err.code !== 'ENOENT')
 		{
 			log(err);

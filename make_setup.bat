@@ -18,6 +18,7 @@ if /i "%pack_launcher%" == "Y" (
 )
 echo Compiling complete!
 timeout 1 > nul
+ren "dist\MXL_Update_v%version%.0.exe" "MXL_Update_v%version%.exe"
 
 echo Renaming the Launcher folder: "dist\win-ia32-unpacked" to "dist\MXL_Launcher_v%version%.0".
 xcopy "dist\win-ia32-unpacked\*" "dist\MXL_Launcher_v%version%.0\" /y /s /e /i /q /r
