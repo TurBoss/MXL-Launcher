@@ -70,4 +70,4 @@ Source: "..\dist\win-ia32-unpacked\resources\*"; DestDir: "{src}\resources"; Fla
 ;Filename: "{src}\resources\external\delete_update.bat"; WorkingDir: "{src}\resources\external\"; Description: "Deletes the update and itself"; Flags: nowait postinstall runhidden;
 
 ;run the launcher after update only if we have admin privileges. if the upate is ran with the /test=true command line parameter, forward it to the Launcher
-Filename: "{src}\{#MyAppExeName}"; Parameters: "/test={param:true|false}"; Description: "Run the Launcher"; Flags: nowait postinstall; Check: IsAdminLoggedOn
+Filename: "{src}\{#MyAppExeName}"; Parameters: "/test={param:true|false}"; Description: "Run the Launcher"; Flags: shellexec nowait postinstall; Check: IsAdminLoggedOn

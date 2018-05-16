@@ -224,4 +224,4 @@ Root: HKCU; Subkey: "{#RegAppCompatFlags}"; ValueType: string; ValueName: "{app}
 
 [Run]
 ;run the launcher after install only if we have admin privileges. if the setup was ran with the /test=true command line parameter, forward it to the Launcher
-Filename: "{app}\{#MyAppExeName}"; Parameters: "/test={param:true|false}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Parameters: "/test={param:true|false}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: shellexec nowait postinstall skipifsilent; Check: IsAdminLoggedOn
