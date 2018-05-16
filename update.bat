@@ -14,6 +14,7 @@ echo 	"dev" (except the "dev\resources\app" folder)
 echo 	"package.json"
 echo 	"package-lock.json"
 echo 	"dev\resources\app\package.json"
+echo 	"dev\resources\app\package-lock.json"
 echo.
 echo Before proceeding, it is a good idea to uninstall Node.js,
 echo and then install it again to update it.

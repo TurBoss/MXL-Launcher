@@ -4,13 +4,36 @@
   "description": "Median XL Launcher",
   "productName": "Median XL",
   "author": {
-    "name": "Quirinus, Marco",
-    "url": "http://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
+    "name": "Ivan \"Quirinus\" Jelenić",
+    "url": "https://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
   },
+  "contributors": [
+    {
+      "name": "Ivan \"Quirinus\" Jelenić",
+      "url": "https://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
+    },
+    {
+      "name": "Marco",
+      "url": "https://forum.median-xl.com/memberlist.php?mode=viewprofile&u=2"
+    },
+    {
+      "name": "whist",
+      "url": "https://forum.median-xl.com/memberlist.php?mode=viewprofile&u=64"
+    },
+    {
+      "name": "UnidColor",
+      "url": "http://unidcolor.deviantart.com/"
+    }
+  ],
+  "os": "win32",
   "main": "dev/resources/app/main.js",
   "homepage": "https://median-xl.com",
   "postinstall": "install-app-deps",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": "github:Median-XL/MXL-Launcher",
+  "bugs": {
+    "url": "https://github.com/Median-XL/MXL-Launcher/issues"
+  },
   "build": {
     "asar": true,
     "appId": "com.electron.medianxllauncher",
@@ -36,7 +59,7 @@
     "build": "build -w --ia32 --dir"
   },
   "devDependencies": {
-    "electron": "^1.8.4",
-    "electron-builder": "^20.10.0"
+    "electron": "^2.0.0",
+    "electron-builder": "^20.13.4"
   }
 }

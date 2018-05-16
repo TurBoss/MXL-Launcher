@@ -10,14 +10,6 @@ if (typeof path === 'undefined') global.path = require('path'); //for resolving/
 //****************************
 
 /***** GENERAL *****/
-global.about = //for settings window about
-{
-	authors: '', //loaded from paths.file.package before sending data to settings window in 'settings_about'
-	artist: 'UnidColor',
-	artist_url: 'http://unidcolor.deviantart.com/',
-	mxlu_url: 'https://median-xl.com/',
-};
-
 global.hotkeys = {
 	exit: 'Esc',
 	closeSettings: 'Esc',
@@ -174,6 +166,7 @@ paths.file =
 global.base_get_url = 'http://get.median-xl.com/launcher/?' + [(devTools.testEnvironment ? 'test=true' : ''), 'get='].filter(Boolean).join('&');
 global.url =
 {
+	homepage: 'https://median-xl.com/',
 	version: base_get_url + 'versions', //we check for version updates and file hashes here
 	launcher_update: base_get_url + 'launcher_update',
 	patch_d2_updates: base_get_url + 'mod_update',

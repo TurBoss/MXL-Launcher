@@ -262,6 +262,8 @@ function isGameRunning()
 
 function togglePlugY(enable, callback)
 {
+	clogn('togglePlugY(' + enable.toString() + ')');
+
 	if (isGameRunning()) return callback(false); //here check if a game is open/loading, quit function if yes
 	if (enable)
 	{
@@ -1303,6 +1305,8 @@ function checkDlls(callback)
 
 function getDlls(_version, callback)
 {
+	clogn('getDlls(' + _version + ')');
+
 	//if (version.median.current && (parseInt(version.median.current.split('.')[0]) < 17) && !status.online) return callback(null);
 
 	let file_name = sprintf(filename.dlls_update, _version);

@@ -158,8 +158,11 @@
 				document.getElementById('launcher_version').innerHTML = 'Median XL Launcher ' + version;
 			});
 
-			ipcRenderer.on('settings_returnAbout', (event, about) => {
-				const text = 'Median XL\n' + about.mxlu_url + '\n\nLauncher authors: ' + about.authors + '\nBackground artist: ' + about.artist + ' - ' + about.artist_url;
+			ipcRenderer.on('settings_returnAbout', (event, about, homepage) => {
+				let text = 'Median XL\n' + homepage + '\n\n';
+				text += 'Author: ' + about.author + '\n';
+				text += 'Contributors: ' + about.contributors.join(', ') + '\n';
+				text += 'Background artist: ' + about.artist.name + ' - ' + about.artist.url;
 				dialog.showMessageBox(win_settings, {title: 'About Median XL Launcher', type: 'info', message: text, buttons: ["OK"] });
 			});
 		</script>

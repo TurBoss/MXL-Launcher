@@ -4,13 +4,37 @@
   "description": "Median XL Launcher",
   "productName": "Median XL",
   "author": {
-    "name": "Quirinus, Marco",
-    "url": "http://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
+    "name": "Ivan \"Quirinus\" Jelenić",
+    "url": "https://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
   },
+  "contributors": [
+    {
+      "name": "Ivan \"Quirinus\" Jelenić",
+      "url": "https://forum.median-xl.com/memberlist.php?mode=viewprofile&u=49"
+    },
+    {
+      "name": "Marco",
+      "url": "https://forum.median-xl.com/memberlist.php?mode=viewprofile&u=2"
+    },
+    {
+      "name": "whist",
+      "url": "https://forum.median-xl.com/memberlist.php?mode=viewprofile&u=64"
+    },
+    {
+      "name": "UnidColor",
+      "url": "http://unidcolor.deviantart.com/"
+    }
+  ],
+  "os": "win32",
   "main": "main.js",
   "homepage": "https://median-xl.com",
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": "github:Median-XL/MXL-Launcher",
+  "bugs": {
+    "url": "https://github.com/Median-XL/MXL-Launcher/issues"
+  },
   "dependencies": {
     "async": "^2.6.0",
-    "fs-extra": "^5.0.0"
+    "fs-extra": "^6.0.1"
   }
 }

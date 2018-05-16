@@ -297,6 +297,16 @@ ipcMain.on('settings_vidtest', (event, _path) => {
 });
 
 ipcMain.on('settings_about', (event) => {
-	about.authors = readJSON(paths.file.package).author.name;
-	settingsWindow.webContents.send('settings_returnAbout', about);
+	let about = {
+		author: readJSON(paths.file.package).author.name,
+		contributors: readJSON(paths.file.package).contributors,
+		artist: {},
+	};
+	about.artist = about.contributors.pop();
+	about.contributors = about.contributors.filter((person) => { return person.name !== about.author; }); //remove author
+	about.contributors.forEach((v, i, arr) => {	arr[i] = v.name; }); //remove links
+
+	clogn(JSONToString(about));
+
+	settingsWindow.webContents.send('settings_returnAbout', about, url.homepage);
 });

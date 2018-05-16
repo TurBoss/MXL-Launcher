@@ -10,9 +10,14 @@ The Median XL Launcher takes care of:
 
 It is built on [Node.js](https://nodejs.org/) & [Electron](https://electronjs.org/), and compiled to Setup & Update files via [Inno Setup](http://www.jrsoftware.org/isinfo.php) scripts. Archives are handled with [7-zip](https://www.7-zip.org/), and versions are patched/updated with difference files created with [Xdelta3](http://xdelta.org/). JSON files are manipulated with [jq](https://stedolan.github.io/jq/). The manifest of the executable is changed with the [Microsoft Manifest Tool](https://msdn.microsoft.com/en-us/library/windows/desktop/aa375649(v=vs.85).aspx) to use the UAC prompt to ask for admin privileges.
 
+## Download
+
+The latest Launcher setup can be downloaded from:  
+https://get.median-xl.com/launcher/
+
 ____
 
-## Quick Guide
+## Quick Development Guide
 
 * Run [update.bat](update.bat) to create Builder and Launcher modules, and the dev test version of the Launcher after pulling the repo.
 * [test.bat](test.bat) runs the dev test version of the Launcher, useful for quickly testing dev code without building every time.  

@@ -50,26 +50,32 @@ echo.
 rem timeout 1 > nul
 
 echo Changing the Launcher executable to use the UAC Prompt to ask for Admin rights:
-rem Extract the manifest.
+rem Extract the manifest. It is important that the mainfest file doesn't contain spaces in the name, otherwise the for+findstr functions freak out.
 set "target_file=dist\win-ia32-unpacked\Median XL.exe"
-mt.exe -inputresource:"%target_file%";#1 -out:"%target_file%.manifest"
+set "manifest_file=MedianXL.manifest"
+mt.exe -inputresource:"%target_file%";#1 -out:"%manifest_file%"
+timeout 1 > nul
 rem Edit the manifest to require admin rights.
 set "replace=asInvoker"
 set "replaced=requireAdministrator"
 setlocal enableDelayedExpansion
 (
-   for /F "tokens=1* delims=:" %%a in ('findstr /N "^" %target_file%.manifest') do (
+   for /F "tokens=1* delims=:" %%a in ('findstr /N "^" %manifest_file%') do (
       set "line=%%b"
       if defined line set "line=!line:%replace%=%replaced%!"
       echo !line!
    )
-) > "%target_file%.manifest.tmp"
+) > "%manifest_file%.tmp"
 endlocal
-del /q "%target_file%.manifest"
-ren "%CD%\%target_file%.manifest.tmp" "%target_file%.manifest"
 rem Put the changed manifest into the executable.
-mt.exe -manifest "%target_file%.manifest" -outputresource:"%target_file%";1
-del /q "%target_file%.manifest"
+mt.exe -manifest "%manifest_file%.tmp" -outputresource:"%target_file%";1
+timeout 1 > nul
+IF EXIST "%manifest_file%" (del /q "%manifest_file%")
+IF EXIST "%manifest_file%.tmp" (del /q "%manifest_file%.tmp")
+echo.
+
+echo Copying the License file:
+copy /Y "LICENSE" "dist\win-ia32-unpacked\LICENSE.txt"
 echo.
 
 if /i not "%make_setup%" == "N" (call make_setup.bat)
