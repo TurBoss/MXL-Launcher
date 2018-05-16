@@ -127,77 +127,63 @@ app.on('window-all-closed', () => app.quit()); //http://electron.atom.io/docs/ap
 app.on('ready', () => {
 	clogn('app ready');
 
-	isRunningAsAdmin((err_admin, admin) => {
-		if (err_admin) { log(err_admin); admin = false;	}
-		clogn('Running as admin? ' + admin);
-		
-		if (!admin)
-		{
-			reg.addAdmin(paths.file.launcher_exe, (err_add_admin) => { //makes the app run as admin the next time it starts
-				idialog('Median XL - Administrator', 'Please run the launcher with administrator privileges.');
-				app.exit(exit_codes.error);
-			});
-		}
-		else
-		{
-			_getNews(); //sets --> status.news.success & status.news.data; gets news from online. async
-			async.during(
-				(_callback) => _callback(null, isNull(status.news.success) || !_isWinReady()),
-				(_callback) => setTimeout(_callback, checks_frequency),
-				(err) => win.webContents.send('index_returnNews', status.news.data) //sends news to index.html
-			);
+	reg.addAdmin(paths.file.launcher_exe);
+	_getNews(); //sets --> status.news.success & status.news.data; gets news from online. async
+	async.during(
+		(_callback) => _callback(null, isNull(status.news.success) || !_isWinReady()),
+		(_callback) => setTimeout(_callback, checks_frequency),
+		(err) => win.webContents.send('index_returnNews', status.news.data) //sends news to index.html
+	);
 
-			getLauncherVersion(); //sets --> version.launcher.current, sync
-			if (!devTools.disableLauncherUpdates && _isLocalUpdateReady()) return restartLauncherAndRun(paths.file.update, inno_silent_levels.verysilent, exit_codes.update); //sync; paths.file.update is set by _isLocalUpdateReady
-			getVersionInfo((err) => { //sets --> version; get the latest versions info from online
-				status.online = !err;
-				if (!status.online) return edialog('Median XL - No version information', 'Could not get version information from the internet, using the currently installed one.')
-				if (devTools.disableLauncherUpdates) return;
-				fetchLauncherUpdates((err2, update_path) => {
-					if (update_path)
-					{
-						async.during(
-							(_callback) => _callback(null, !_isWinReady()),
-							(_callback) => setTimeout(_callback, checks_frequency),
-							(err3) => display('notice')
-						);
-					}
-				});
-			});
-
-			getSettings((err_settings) => { //sets --> settings; with things from the settings.json file
-				if (!win) createMainWindow(); //creates the window, but doesn't show it. uses settings
-
-				//do offline checks. uses settings
-				offlineChecks(); // sets --> status.checks.offline, and does/sets stuff below:
-				/*{
-					checkD2Path,
-					getPatchD2Size, sets --> status.checks.size
-					getPatchD2Hash, sets --> status.checks.hash
-					checkVidTest,
-					checkGlide,
-					checkPlugY,
-					checkD2Compatibility,
-					checkGameHash,
-					addTSWReg,
-					writeVideoSettingsToReg,
-				}*/
-
-				//compare hashes/sizes to the online version info
-				waitForModFilesCheckup(); //waits for status.online, status.checks.size or status.checks.hash; sets --> status.checks.patch_d2, status.checks.dll
-
-				//display window, buttons and version
+	getLauncherVersion(); //sets --> version.launcher.current, sync
+	if (!devTools.disableLauncherUpdates && _isLocalUpdateReady()) return restartLauncherAndRun(paths.file.update, inno_silent_levels.verysilent, exit_codes.update); //sync; paths.file.update is set by _isLocalUpdateReady
+	getVersionInfo((err) => { //sets --> version; get the latest versions info from online
+		status.online = !err;
+		if (!status.online) return edialog('Median XL - No version information', 'Could not get version information from the internet, using the currently installed one.')
+		if (devTools.disableLauncherUpdates) return;
+		fetchLauncherUpdates((err2, update_path) => {
+			if (update_path)
+			{
 				async.during(
 					(_callback) => _callback(null, !_isWinReady()),
 					(_callback) => setTimeout(_callback, checks_frequency),
-					(err) => {
-						//win.webContents.send('index_medianVersion', settings.median_version); //send settings mod version to index.html (displayed under the play button)
-						waitForChecksDisplayButtons(); //waits for status.checks.patch_d2 and status.checks.dll
-						_displayWindow();
-					}
+					(err3) => display('notice')
 				);
-			});
-		}
+			}
+		});
+	});
+
+	getSettings((err_settings) => { //sets --> settings; with things from the settings.json file
+		if (!win) createMainWindow(); //creates the window, but doesn't show it. uses settings
+
+		//do offline checks. uses settings
+		offlineChecks(); // sets --> status.checks.offline, and does/sets stuff below:
+		/*{
+			checkD2Path,
+			getPatchD2Size, sets --> status.checks.size
+			getPatchD2Hash, sets --> status.checks.hash
+			checkVidTest,
+			checkGlide,
+			checkPlugY,
+			checkD2Compatibility,
+			checkGameHash,
+			addTSWReg,
+			writeVideoSettingsToReg,
+		}*/
+
+		//compare hashes/sizes to the online version info
+		waitForModFilesCheckup(); //waits for status.online, status.checks.size or status.checks.hash; sets --> status.checks.patch_d2, status.checks.dll
+
+		//display window, buttons and version
+		async.during(
+			(_callback) => _callback(null, !_isWinReady()),
+			(_callback) => setTimeout(_callback, checks_frequency),
+			(err) => {
+				//win.webContents.send('index_medianVersion', settings.median_version); //send settings mod version to index.html (displayed under the play button)
+				waitForChecksDisplayButtons(); //waits for status.checks.patch_d2 and status.checks.dll
+				_displayWindow();
+			}
+		);
 	});
 
 	app.on('browser-window-blur', () => { globalShortcut.unregisterAll(); });

@@ -21,6 +21,8 @@ Located in the [root](https://github.com/Median-XL/) of the repository:
 * [update.bat](update.bat) - updates the Launcher modules, Builder modules, and dev test version of the Launcher binaries and modules.
 * [make_setup.bat](make_setup.bat) - makes the Setup and Updates for the Launcher in [dist](dist). Used by [make.bat](make.bat).
 * [jq.exe](jq.exe) - tool for easy json manipulation.
+* [mt.exe](mt.exe) - Microsoft Manifest Tool for extracting and embedding manifests, used to make the Launcher executable use the UAC prompt to request admin rights.
+* [mt.exe.config](mt.exe.config) - used by [mt.exe](mt.exe) for compatibility purposes.
 
 Located in [dev\resources\app](dev\resources\app):
 * [main.js](dev\resources\app\main.js) - main app file: app logic handling, load modules/includes, initialize state variables
@@ -64,7 +66,7 @@ Most of the building/compiling process is handled by the [make.bat](make.bat) ba
 3. Commit to [MXL-Launcher](https://gitlab.com/Median-XL/MXL-Launcher), and create a tag with the new version numbers.
 
 #### HOW TO CREATE/UPDATE THE BUILDER?
-1. Check *Node.js* version `npm -v`. If it's outdated, update with `npm -g i npm`. If that doesn't work uninstall *Node.js* and install it again to get the new version.
+1. Uninstall *Node.js* and install it again to get the new version of *Node.js* and *npm*.
 2. (Optional) To create a new Builder folder, copy [package.json](package.json), [make.bat](make.bat), [make_setup.bat](make_setup.bat), [test.bat](test.bat), [update.bat](update.bat), [jq.exe](jq.exe), [installer](installer), and [dev](dev) to a new folder.
 3. Run [update.bat](update.bat) in the Builder folder you wish to create/update.
 
@@ -87,5 +89,7 @@ ____
 * *xdelta* - creating a patch: `"path to xdelta3.exe" -v -f -A= -S lzma -9 -B 419430400 -W 16777216 -s "path_original_file" "path_new_file" "path_xpatch_file"`, and applying a patch: `"path to xdelta3.exe" -d -f -s "path_original_file" "path_xpatch_file" "path_new_file"`.
 * SHA1 hash of files can be calculated with `"path to 7za.exe" h -scrcsha1 "path to file"`.
 * **\*.asar** files can be packed with `asar pack "path_source_folder" "path_filename.asar"`, and unpacked with `asar extract "path_filename.asar" "path_destination_folder"` if you have *asar* installed (`npm install asar -g` to install).
-* 
+* *Manifest Tool* extract manifest: `"path to mt.exe" -inputresource:"path_filename.exe";#1 -out:"path_filename.exe.manifest"`, embed manifest `"path to mt.exe" -manifest "path_filename.exe.manifest" -outputresource:"path_filename.exe";1` (`&ast;.manifest` files are actually `&ast;.xml` files, so you can edit them with a text editor).
+* Check the *npm* version with `npm -v`. If it's outdated, you can update it with `npm -g i npm`.
+* Check the *Node.js* version with `node -v`. To update it, reinstall it.
 * You can manually change the metadata/icons of executables with the [ResourceHacker](http://www.angusj.com/resourcehacker/resource_hacker.zip) program instead of doing it with **package.json**s and *Inno Setup* scripts.

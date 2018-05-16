@@ -46,7 +46,31 @@ echo Building the Launcher:
 call npm run build
 timeout 1 > nul
 echo Building complete!
+echo.
 rem timeout 1 > nul
+
+echo Changing the Launcher executable to use the UAC Prompt to ask for Admin rights:
+rem Extract the manifest.
+set "target_file=dist\win-ia32-unpacked\Median XL.exe"
+mt.exe -inputresource:"%target_file%";#1 -out:"%target_file%.manifest"
+rem Edit the manifest to require admin rights.
+set "replace=asInvoker"
+set "replaced=requireAdministrator"
+setlocal enableDelayedExpansion
+(
+   for /F "tokens=1* delims=:" %%a in ('findstr /N "^" %target_file%.manifest') do (
+      set "line=%%b"
+      if defined line set "line=!line:%replace%=%replaced%!"
+      echo !line!
+   )
+) > "%target_file%.manifest.tmp"
+endlocal
+del /q "%target_file%.manifest"
+ren "%CD%\%target_file%.manifest.tmp" "%target_file%.manifest"
+rem Put the changed manifest into the executable.
+mt.exe -manifest "%target_file%.manifest" -outputresource:"%target_file%";1
+del /q "%target_file%.manifest"
+echo.
 
 if /i not "%make_setup%" == "N" (call make_setup.bat)
 

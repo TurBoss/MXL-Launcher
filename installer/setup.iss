@@ -47,7 +47,7 @@ Compression=lzma2/max
 SolidCompression=yes
 ;CreateCustomForm
 ;PrepareToInstall Preparing to Install
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 ;https://stackoverflow.com/a/21565479/2331033
 ;UsePreviousAppDir=no 
 
@@ -91,6 +91,7 @@ begin
 end;
 
 //check if we're running the Installer as admin, and warn user
+//not really needed anymore after setting PrivilegesRequired=admin
 function InitializeSetup: boolean;
 var
   Admin: Boolean;
@@ -222,5 +223,5 @@ Name: "{app}\Uninstall"; Filename: "{uninstallexe}"
 Root: HKCU; Subkey: "{#RegAppCompatFlags}"; ValueType: string; ValueName: "{app}\{#MyAppExeName}"; ValueData: "~ RUNASADMIN"; Flags: noerror deletevalue uninsdeletevalue
 
 [Run]
-;run the launcher after install only if we have admin privileges. if the setup was ran with the /test command line parameter, forward it to the Launcher
+;run the launcher after install only if we have admin privileges. if the setup was ran with the /test=true command line parameter, forward it to the Launcher
 Filename: "{app}\{#MyAppExeName}"; Parameters: "/test={param:true|false}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent; Check: IsAdminLoggedOn
