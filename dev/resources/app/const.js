@@ -423,7 +423,7 @@ global.glide_reg = {
 		},
 		'desktopresolution': {
 			type: 'REG_DWORD',
-			value: '0'
+			value: '1'
 		},
 		'refreshrate': {
 			type: 'REG_DWORD',
